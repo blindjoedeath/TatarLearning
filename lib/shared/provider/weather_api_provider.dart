@@ -19,4 +19,8 @@ class WeatherApiProvider {
       throw Exception('Failed to load post');
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9ea119d... Inited project
