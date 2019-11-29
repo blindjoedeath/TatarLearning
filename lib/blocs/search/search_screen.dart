@@ -23,47 +23,122 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: SearchPersistentHeaderDelegate(
-            statusBarHeight: MediaQuery.of(context).padding.top,
-            searchBloc: searchBloc
-          ),
+    return CustomScrollView(     
+      slivers: [
+        SearchAppBar(
+          searchBloc: searchBloc,
         ),
-        SearchTabBar(),
         SliverList(
-          delegate: SliverChildBuilderDelegate((context, index){
-            return ListTile(
-              title: Text("text"),
-            );
-          },
-          childCount: 10),
-        )
+          delegate: SliverChildBuilderDelegate(
+            (context, index){
+              return ListTile(
+                title: Text("Title"),
+              );
+            },
+            childCount: 20
+          )
+        ),
       ],
     );
   }
 }
 
 class SearchTabBar extends StatefulWidget{
+
+  Size get preferredSize{
+    return _tabBar?.preferredSize;
+  }
+
   @override
   State<StatefulWidget> createState() => _SearchTabBarState();
 }
 
 class _SearchTabBarState extends State<SearchTabBar> with SingleTickerProviderStateMixin{
+  TabController _tabController;
+  TabBar _tabBar;
+
+  Size get preferredSize{
+    return _tabBar?.preferredSize;
+  }
+
+  @override
+  void initState() {
+    _tabController = TabController(
+      length: 3,    
+      vsync: this
+    );
+    super.initState();
+  }
+
+  _buildScreen(){
+    return Column(
+      children: <Widget>[
+        Center(
+          child: Text("text")
+        )
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return TabBar(
+    _tabBar = TabBar(
+      controller: _tabController,
       tabs: <Widget>[
-        Tab(text: "text",),
-        Tab(text: "text",),
-        Tab(text: "text",)
+        Tab(icon: Icon(Icons.search),),
+        Tab(icon: Icon(Icons.search),),
+        Tab(icon: Icon(Icons.search),),
       ],
-      controller: TabController(
-        length: 3,    
-        vsync: this
+    );
+    return _tabBar;
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+}
+
+class SearchTabBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegate{
+
+  final SearchBloc searchBloc;
+
+  SearchTabBar _searchTabBar;
+
+  SearchTabBarPersistentHeaderDelegate({@required this.searchBloc});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    _searchTabBar = SearchTabBar();
+  }
+
+  @override
+  double get maxExtent => _searchTabBar.p;
+
+  @override
+  double get minExtent => statusBarHeight + searchBarHeight;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
+  }
+}
+
+class SearchAppBar extends StatelessWidget{
+
+  final SearchBloc searchBloc;
+
+  const SearchAppBar({@required this.searchBloc});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: SearchAppBarPersistentHeaderDelegate(
+        statusBarHeight: MediaQuery.of(context).padding.top,
+        searchBloc: searchBloc
       ),
     );
   }
@@ -71,7 +146,7 @@ class _SearchTabBarState extends State<SearchTabBar> with SingleTickerProviderSt
 }
 
 
-class SearchPersistentHeaderDelegate extends SliverPersistentHeaderDelegate{
+class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegate{
 
   final SearchBloc searchBloc;
 
@@ -81,7 +156,7 @@ class SearchPersistentHeaderDelegate extends SliverPersistentHeaderDelegate{
 
   double fromToHeight = 50;
 
-  SearchPersistentHeaderDelegate({@required this.searchBloc, @required this.statusBarHeight});
+  SearchAppBarPersistentHeaderDelegate({@required this.searchBloc, @required this.statusBarHeight});
 
   _buildLanguageRow(){
     return FromToLanguageRow(
@@ -129,7 +204,6 @@ class SearchPersistentHeaderDelegate extends SliverPersistentHeaderDelegate{
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    print(shrinkOffset);
     StatusBar.color(Theme.of(context).primaryColor);
     var shrinkRatio = shrinkOffset / fromToHeight;
     shrinkRatio = shrinkRatio > 1 ? 1 : math.pow(shrinkRatio, 0.5);
