@@ -1,3 +1,4 @@
+import 'package:app/blocs/search/search_state.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -29,8 +30,10 @@ class SearchTextEditingDone extends SearchEvent{
 
 class SearchLanguageChanged extends SearchEvent{}
 
-class SearchTypeChanged extends SearchEvent{}
+class SearchTypeChanged extends SearchEvent{
+  final SearchType searchType;
 
-class TestEvent extends SearchEvent{
+  const SearchTypeChanged({@required this.searchType});
 }
+
 			

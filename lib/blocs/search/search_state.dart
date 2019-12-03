@@ -6,17 +6,17 @@ enum SearchType{Global, Local}
 
 class SearchState extends Equatable {
 
-  const SearchState({this.searchLangage = Language.Russian, this.searchType = SearchType.Local});
+  const SearchState({this.searchLanguage = Language.Russian, this.searchType = SearchType.Local});
 
-  final Language searchLangage;
+  final Language searchLanguage;
   final SearchType searchType;
 
   @override
-  List<Object> get props => [searchLangage, searchType];
+  List<Object> get props => [searchLanguage, searchType];
 
   SearchState copyWith({Language searchLangage, SearchType searchType}){
     return SearchState(
-      searchLangage: searchLangage ?? this.searchLangage,
+      searchLanguage: searchLangage ?? this.searchLanguage,
       searchType: searchType ?? this.searchType
     );
   }

@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   SearchState get initialState => SearchState(
-    searchLangage: Language.Russian,
+    searchLanguage: Language.Russian,
     searchType: SearchType.Local
   );
 
@@ -48,12 +48,18 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       yield SearchDone(text: data);
     } else if (event is SearchLanguageChanged){
       yield* _mapLanguageChanged(event);
+    } else if(event is SearchTypeChanged){
+      yield* _mapSearchTypeChanged(event);
     }
   }
 
-  Stream<SearchState> _mapLanguageChanged(SearchEvent event) async* {
-    var lang = state.searchLangage == Language.Russian ? Language.Tatar : Language.Russian;
+  Stream<SearchState> _mapLanguageChanged(SearchLanguageChanged event) async* {
+    var lang = state.searchLanguage == Language.Russian ? Language.Tatar : Language.Russian;
     yield state.copyWith(searchLangage: lang);
+  }
+
+  Stream<SearchState> _mapSearchTypeChanged(SearchTypeChanged event) async* {
+    yield state.copyWith(searchType: event.searchType);
   }
 }
 			
