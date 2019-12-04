@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:app/shared/entity/language.dart';
+import 'package:app/shared/repository/card_repository.dart';
+import 'package:flutter/material.dart';
 
 import 'search_event.dart';
 import 'search_state.dart';
@@ -7,49 +11,57 @@ import 'package:rxdart/rxdart.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
+  final CardSearchRepository cardSearchRepository;
+
+  final PublishSubject<SearchTextEdited> _debounceSubject = PublishSubject<SearchTextEdited>();
+  
+  Stream<SearchState> get _debounceStates{
+    return _debounceSubject.stream
+      .where((event) => event is SearchTextEdited)
+      .cast<SearchTextEdited>()
+      .debounceTime(Duration(milliseconds: 250))
+      .distinct()
+      .switchMap((e){
+        var event = SearchTextEditingDone(text: e.text);
+        return mapEventToState(event);
+      }).share();
+  }
+
+  SearchBloc({@required this.cardSearchRepository}) : assert(cardSearchRepository != null);
+
+  @override
+  close(){
+    _debounceSubject?.close();
+    super.close();
+  }
+
   SearchState get initialState => SearchState(
     searchLanguage: Language.Russian,
     searchType: SearchType.Local
   );
 
   @override
-  Stream<SearchState> transformEvents(Stream<SearchEvent> events, Stream<SearchState> Function(SearchEvent event) next) {
-    final observableStream = events as Observable<SearchEvent>;
-    final nonDebounceStream = observableStream
-      .where((event) {
-        return (event is! SearchTextEdited);
-      });
-
-    final debounceStates = observableStream
-      .where((event) {
-        return (event is SearchTextEdited);
-      })
-      .cast<SearchTextEdited>()
-      .debounceTime(Duration(milliseconds: 1000))
-      .distinct()
-      .switchMap((e){
-        var event = SearchTextEditingDone(text: e.text);
-        return next(event);
-      });
-
-    var nonDebounceStates = super.transformEvents(nonDebounceStream, next) as Observable<SearchState>;
-    return nonDebounceStates.mergeWith([debounceStates]);
-  }
-
-  Future<String> testSpam(String text){
-    return Future.delayed(Duration(seconds: 5), () => text);
+  Stream<SearchState> transformEvents(Stream<SearchEvent> events, Stream<SearchState> Function(SearchEvent event) next){
+    var nonDebounceStates = super.transformEvents(events, next) as Observable<SearchState>;
+    return nonDebounceStates.mergeWith([_debounceStates]);
   }
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    if (event is SearchTextEditingDone){
-      yield SearchLoading();
-      final data = await testSpam(event.text);
-      yield SearchDone(text: data);
+    if (event is SearchTextEdited && event.text.isNotEmpty){
+      if (state.searchType == SearchType.Local){
+        yield* _mapTextEdited(event.text);
+      } else {
+        _debounceSubject.add(event);
+      }
+    } else if(event is SearchTextEditingDone && event.text.isNotEmpty){
+      yield* _mapTextEdited(event.text);
     } else if (event is SearchLanguageChanged){
       yield* _mapLanguageChanged(event);
     } else if(event is SearchTypeChanged){
       yield* _mapSearchTypeChanged(event);
+    } else {
+      yield state.copyWith();
     }
   }
 
@@ -60,6 +72,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   Stream<SearchState> _mapSearchTypeChanged(SearchTypeChanged event) async* {
     yield state.copyWith(searchType: event.searchType);
+  }
+
+  Stream<SearchState> _mapTextEdited(String text) async* {
+    yield state.searchLoading();
+    final cards = await cardSearchRepository.find(text, state.searchType);
+    yield state.searchDone(cards);
   }
 }
 			

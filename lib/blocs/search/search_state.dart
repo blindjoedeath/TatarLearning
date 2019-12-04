@@ -1,3 +1,4 @@
+import 'package:app/shared/entity/card.dart';
 import 'package:app/shared/entity/language.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -20,12 +21,31 @@ class SearchState extends Equatable {
       searchType: searchType ?? this.searchType
     );
   }
+
+  SearchDone searchDone(List<Card> cards){
+    return new SearchDone(
+      cards: cards,
+      language: this.searchLanguage,
+      searchType: this.searchType
+    );
+  }
+
+  SearchLoading searchLoading(){
+    return new SearchLoading(
+      language: this.searchLanguage,
+      searchType: this.searchType
+    );
+  }
 }
 			
-class SearchLoading extends SearchState{}
+class SearchLoading extends SearchState{
+    SearchLoading({Language language, SearchType searchType})
+      : super(searchLanguage: language, searchType: searchType);
+}
 
 class SearchDone extends SearchState{
-  final String text;
+  final List<Card> cards;
 
-  SearchDone({@required this.text});
+  SearchDone({Language language, SearchType searchType, @required this.cards}) 
+  : super(searchLanguage: language, searchType: searchType);
 }

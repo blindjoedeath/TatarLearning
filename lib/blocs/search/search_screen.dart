@@ -2,6 +2,7 @@ import 'dart:wasm';
 
 import 'package:app/shared/entity/language.dart';
 import 'package:app/tatar_keyboard/tatar_input.dart';
+import 'package:app/tatar_keyboard/tatar_key_row.dart';
 import 'package:app/tatar_keyboard/tatar_keyboard_impl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:statusbar/statusbar.dart';
@@ -50,6 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     _scrollController?.dispose();
 
+    _textEditingController.removeListener(_textListener);
     _textEditingController?.dispose();
     super.dispose();
   }
@@ -57,6 +59,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     _textEditingController = new TextEditingController();
+    _textEditingController.addListener(_textListener);
 
     _tatarFocusNode = FocusNode();
     _rusFocusNode = FocusNode();
@@ -77,6 +80,12 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  void _textListener(){
+    var text = _textEditingController.text.trim();
+    var event = SearchTextEdited(text: text);
+    widget.searchBloc.add(event);
+  }
+
   FocusNode _getNode(Language language){
     var newNode = language == Language.Russian ? _rusFocusNode : _tatarFocusNode;
     var previousNode = language == Language.Russian ? _tatarFocusNode : _rusFocusNode;
@@ -90,7 +99,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return TatarKeyboard(
       child: CustomScrollView( 
         controller: _scrollController,
@@ -145,16 +153,15 @@ class SearchScreenBodySliver extends StatelessWidget{
     );
   }
 
-  Widget _buildTestList(SearchState state){
+  Widget _buildList(SearchDone state){
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index){
-          var text = state.searchType == SearchType.Global ? "Global" : "Local";
           return ListTile(
-            title: Text(text + " $index"),
+            title: Text(state.cards[index].word),
           );
         },
-        childCount: 100
+        childCount: state.cards.length
       )
     );
   }
@@ -166,9 +173,20 @@ class SearchScreenBodySliver extends StatelessWidget{
       builder: (context, state){
         if(state is SearchLoading){
           return _buildIndicator();
-        } else {
-          return _buildTestList(state);
-        }
+        } else if(state is SearchDone){
+          return _buildList(state);
+        } 
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index){
+              var text = state.searchType == SearchType.Global ? "Global" : "Local";
+              return ListTile(
+                title: Text(text + " index $index"),
+              );
+            },
+            childCount: 100
+          )
+        );
       }
     );
   }

@@ -4,7 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'tatar_themes.dart';
 import 'dart:async';
 
-const List<String> _tatarCharacters = ["ә", "җ", "ң", "ө", "ү", "һ"];
+const List<String> TatarCharacters = ["ә", "җ", "ң", "ө", "ү", "һ"];
 
 class _TatarKeyBase extends StatefulWidget{
 
@@ -253,8 +253,8 @@ class _TatarKeysRowState extends State<TatarKeysRow>{
 
   @override
   void initState() {
-    _keyStates = new List<_KeyState>.generate(_tatarCharacters.length, (index){
-      return _KeyState(ValueNotifier(false), _tatarCharacters[index]);
+    _keyStates = new List<_KeyState>.generate(TatarCharacters.length, (index){
+      return _KeyState(ValueNotifier(false), TatarCharacters[index]);
     });
     _state = ValueNotifier(_CapsState.Disabled);
     super.initState();
@@ -271,12 +271,12 @@ class _TatarKeysRowState extends State<TatarKeysRow>{
   }
 
   List<Widget> _buildKeys(){
-    return List<Widget>.generate(_tatarCharacters.length, (index){
+    return List<Widget>.generate(TatarCharacters.length, (index){
       return ValueListenableBuilder(
         valueListenable: _keyStates[index].isSelected,
         builder: (context, value, widget){
           return _TatarKey(
-            character: _tatarCharacters[index],
+            character: TatarCharacters[index],
             isSelected: value,
             capsState: _state,
           );

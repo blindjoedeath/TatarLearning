@@ -1,3 +1,5 @@
+import 'package:app/shared/repository/card_repository.dart';
+
 import 'search_screen.dart';
 import 'search_bloc.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +14,14 @@ class SearchBuilder extends StatefulWidget {
 
 class _SearchBuilderState extends State<SearchBuilder>{
 
-  SearchBloc searchBloc;
+  SearchBloc _searchBloc;
+  CardSearchRepository _cardSearchRepository;
 
   @override
   void initState() {
-    searchBloc = SearchBloc(
+    _cardSearchRepository = CardSearchRepository();
+    _searchBloc = SearchBloc(
+      cardSearchRepository: _cardSearchRepository
     );
     super.initState();
   }
@@ -24,16 +29,19 @@ class _SearchBuilderState extends State<SearchBuilder>{
   @override
   void dispose() {
     super.dispose();
-    searchBloc?.close();
+    _searchBloc?.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SearchBloc>.value(
-      value: searchBloc,
-      child: SearchScreen(
-        searchBloc: searchBloc,
-      ),
+    return RepositoryProvider(
+      builder: (context) => _cardSearchRepository, 
+      child: BlocProvider<SearchBloc>.value(
+        value: _searchBloc,
+        child: SearchScreen(
+          searchBloc: _searchBloc,
+        ),
+      )
     );
   }
 

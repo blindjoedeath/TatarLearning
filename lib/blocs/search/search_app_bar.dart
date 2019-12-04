@@ -1,12 +1,9 @@
 import 'dart:wasm';
 
 import 'package:app/shared/entity/language.dart';
-import 'package:app/tatar_keyboard/tatar_input.dart';
-import 'package:app/tatar_keyboard/tatar_keyboard_impl.dart';
-import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:statusbar/statusbar.dart';
 
-import 'search_builder.dart';
 import 'search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,6 +78,10 @@ class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegat
               ),
               Expanded(
                 child: TextField(
+                  inputFormatters: [WhitelistingTextInputFormatter(
+                    RegExp("[a-zA-zа-яА-Я ]"),
+                  )],
+                  textInputAction: TextInputAction.search,
                   scrollPadding: EdgeInsets.only(top: statusBarHeight + _searchBarHeight),
                   focusNode: focusNode,
                   autocorrect: false,
