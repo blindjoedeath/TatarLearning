@@ -1,21 +1,18 @@
-import 'dart:wasm';
 
 import 'package:app/shared/entity/language.dart';
+import 'package:app/shared/entity/word_card.dart';
 import 'package:app/tatar_keyboard/tatar_input.dart';
-import 'package:app/tatar_keyboard/tatar_key_row.dart';
 import 'package:app/tatar_keyboard/tatar_keyboard_impl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:statusbar/statusbar.dart';
 
 import 'search_app_bar.dart';
 import 'search_tab_bar.dart';
-import 'search_builder.dart';
 import 'search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'search_state.dart';
 import 'search_event.dart';
-import 'dart:math' as math;
 
 
 class SearchScreen extends StatefulWidget{
@@ -30,13 +27,13 @@ class SearchScreen extends StatefulWidget{
 }
 
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin{
 
   FocusNode _tatarFocusNode;
   FocusNode _rusFocusNode;
   ScrollController _scrollController;
   TextEditingController _textEditingController;
-
+  TabController _tabController;
 
   void _disposeNode(FocusNode node){
     node?.unfocus();
@@ -65,6 +62,12 @@ class _SearchScreenState extends State<SearchScreen> {
     _rusFocusNode = FocusNode();
 
     _scrollController = ScrollController();
+
+    _tabController = TabController(
+      initialIndex: widget.searchBloc.initialState.searchType == SearchType.Global ? 0 : 1,
+      length: 2,    
+      vsync: this
+    );
 
     _tatarFocusNode.addListener(_nodeListener);
     _rusFocusNode.addListener(_nodeListener);
@@ -115,9 +118,11 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           SearchTabBarSliver(
             searchBloc: widget.searchBloc,
+            tabController: _tabController,
           ),
           SearchScreenBodySliver(
             searchBloc: widget.searchBloc,
+            tabController: _tabController,
           )
         ],
       ),
@@ -135,59 +140,60 @@ class SearchScreenBodySliver extends StatelessWidget{
 
   final SearchBloc searchBloc;
   final Widget child;
+  final TabController tabController;
 
-  const SearchScreenBodySliver({@required this.searchBloc, this.child});
+  const SearchScreenBodySliver({@required this.searchBloc, @required this.tabController, this.child});
 
   Widget _buildIndicator(){
-    return SliverLayoutBuilder(
-      builder: (context, constrainst){
-        return SliverToBoxAdapter(
-          child: SizedBox(
-            height: constrainst.crossAxisExtent,
-            child: Center(
-              child: CircularProgressIndicator()
-            )
-          )
-        );
-      }
+    return Center(
+      child: CircularProgressIndicator()
     );
   }
 
-  Widget _buildList(SearchDone state){
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index){
-          return ListTile(
-            title: Text(state.cards[index].word),
-          );
-        },
-        childCount: state.cards.length
-      )
+  Widget _buildDefaultScreen(){
+    return Center(
+      child: Text("waiting")
+    );
+  }
+
+  Widget _buildCardsList(List<WordCard> cards){
+    return ListView.builder(
+      addRepaintBoundaries: true,
+      itemBuilder: (context, index){
+        return ListTile(
+          title: Text(cards[index].word),
+        );
+      },
+      itemCount: cards.length,
+    );
+  }
+
+  Widget _buildTab({bool isGlobal}){
+    return BlocBuilder<SearchBloc, SearchState>(
+      bloc: searchBloc,
+      builder: (context, state){
+        if (state.isEmpty){
+          return _buildDefaultScreen();
+        }else if(state.isLoading){
+          return _buildIndicator();
+        } else{
+          var cards = isGlobal ? state.globalCards : state.localCards;
+          return _buildCardsList(cards);
+        }
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SearchBloc, SearchState>(
-      bloc: searchBloc,
-      builder: (context, state){
-        if(state is SearchLoading){
-          return _buildIndicator();
-        } else if(state is SearchDone){
-          return _buildList(state);
-        } 
-        return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index){
-              var text = state.searchType == SearchType.Global ? "Global" : "Local";
-              return ListTile(
-                title: Text(text + " index $index"),
-              );
-            },
-            childCount: 100
-          )
-        );
-      }
+    return SliverFillRemaining(
+      child: TabBarView(
+        controller: tabController,
+        children: <Widget>[
+          _buildTab(isGlobal: true),
+          _buildTab(isGlobal: false)
+        ],
+      ),
     );
   }
 

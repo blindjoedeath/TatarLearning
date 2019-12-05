@@ -1,4 +1,5 @@
 import 'package:app/blocs/search/search_state.dart';
+import 'package:app/shared/entity/word_card.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -36,4 +37,8 @@ class SearchTypeChanged extends SearchEvent{
   const SearchTypeChanged({@required this.searchType});
 }
 
-			
+class SearchRequestDone extends SearchEvent{
+  final List<WordCard> cards;
+
+  const SearchRequestDone({@required this.cards});
+}			

@@ -1,14 +1,14 @@
 import 'dart:async';
+import 'package:app/shared/entity/word_card.dart';
 import 'package:http/http.dart' show Client;
 import 'dart:convert';
-import '../entity/card.dart';
 
-class MockCardApiProvider {
+class MockWordCardDbProvider {
 
-  Future<List<Card>> fetchCards(String text) {
-    return Future<List<Card>>.delayed(Duration(seconds: 1), (){
-      return List<Card>.generate(10, (index){
-        return Card(
+  Future<List<WordCard>> fetchCards(String text) {
+   return Future<List<WordCard>>.delayed(Duration(milliseconds: 500), (){
+      return List<WordCard>.generate(10, (index){
+        return WordCard(
           word: "$text $index",
           description: "Description $index",
           translates: ["Translate 1", "Translate 2"],
