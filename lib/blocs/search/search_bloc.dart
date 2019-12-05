@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:async/async.dart';
 import 'package:app/shared/entity/language.dart';
 import 'package:app/shared/repository/card_repository.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +14,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   final CardSearchRepository cardSearchRepository;
 
   final PublishSubject<SearchTextEdited> _debounceSubject = PublishSubject<SearchTextEdited>();
+
+  // used inside debouce states stream
+  CancelableOperation _cardsCancelableOperation;
   
   Stream<SearchState> get _debounceStates{
     return _debounceSubject.stream
       .where((event) => event is SearchTextEdited)
       .cast<SearchTextEdited>()
+      .doOnData((data) => this._cardsCancelableOperation?.cancel())
       .debounceTime(Duration(milliseconds: 250))
       .distinct()
       .switchMap((e){
@@ -32,6 +36,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   @override
   close(){
     _debounceSubject?.close();
+    _cardsCancelableOperation?.cancel();
     super.close();
   }
 
@@ -76,7 +81,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   Stream<SearchState> _mapTextEdited(String text) async* {
     yield state.searchLoading();
-    final cards = await cardSearchRepository.find(text, state.searchType);
+    final future = cardSearchRepository.find(text, state.searchType);
+    _cardsCancelableOperation = CancelableOperation.fromFuture(future);
+    final cards = await _cardsCancelableOperation.value;
     yield state.searchDone(cards);
   }
 }
