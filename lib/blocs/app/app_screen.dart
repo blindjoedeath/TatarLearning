@@ -1,6 +1,5 @@
 import 'package:app/blocs/app/app_state.dart';
 import 'package:app/blocs/tab_menu/tab_menu_builder.dart';
-import 'package:app/blocs/weather/weather_builder.dart';
 import 'package:app/blocs/welcome/welcome_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

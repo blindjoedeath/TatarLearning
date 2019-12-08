@@ -136,7 +136,6 @@ class _CapsKeyState extends State<_CapsKey>{
   void _changeState(_CapsState state){
     var capsState = widget.capsState;
     capsState.value = state;
-    capsState.notifyListeners();
   }
 
   void _onDoubleTap(){
@@ -265,7 +264,6 @@ class _TatarKeysRowState extends State<TatarKeysRow>{
     var capsed = _state.value == _CapsState.Disabled ? character : character.toUpperCase();
     if (_state.value == _CapsState.Single){
        _state.value = _CapsState.Disabled;
-       _state.notifyListeners();
     }
     widget.onKeyTapped(capsed);
   }
@@ -292,7 +290,6 @@ class _TatarKeysRowState extends State<TatarKeysRow>{
       var selected = _keyStates[i].isSelected;
       if (selected.value && i != index){
         selected.value = false;
-        selected.notifyListeners();
       }
     }
     if (0 <= index && index < _keyStates.length){
@@ -304,7 +301,6 @@ class _TatarKeysRowState extends State<TatarKeysRow>{
     _tryGetNewKey(event, (index){
       var selected = _keyStates[index].isSelected;
       selected.value = true;
-      selected.notifyListeners();
     });
   }
 
@@ -314,7 +310,6 @@ class _TatarKeysRowState extends State<TatarKeysRow>{
       _onKeyTapped(character);
       var selected = _keyStates[index].isSelected;
       selected.value = false;
-      selected.notifyListeners();
     });
   }
 

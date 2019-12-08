@@ -82,12 +82,6 @@ class _SearchTabBarState extends State<SearchTabBar> with SingleTickerProviderSt
     return _tabBar;
   }
 
-  @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
-  }
-
 }
 
 class SearchTabBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegate{

@@ -1,5 +1,4 @@
 import 'package:app/blocs/app/app_screen.dart';
-import 'package:app/shared/repository/weather_repository.dart';
 import 'package:app/shared/repository/welcomed_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +35,6 @@ class _AppBuilderState extends State<AppBuilder>{
 
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<WeatherRepository>(builder: (context) => WeatherRepository(),),
         RepositoryProvider<WelcomedRepository>(builder: (context) => welcomedRepository,),
       ],
       child: BlocProvider<AppBloc>.value(

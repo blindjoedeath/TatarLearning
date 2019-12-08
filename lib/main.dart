@@ -1,5 +1,4 @@
 import 'package:app/blocs/app/app_builder.dart';
-import 'package:app/blocs/weather/weather_builder.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';

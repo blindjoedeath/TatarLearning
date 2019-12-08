@@ -1,5 +1,3 @@
-import 'dart:wasm';
-
 import 'package:app/shared/entity/language.dart';
 import 'package:flutter/services.dart';
 import 'package:statusbar/statusbar.dart';
@@ -86,7 +84,7 @@ class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegat
                   focusNode: focusNode,
                   autocorrect: false,
                   controller: textEditingController,
-                  keyboardAppearance: Theme.of(context).brightness,
+                  keyboardAppearance: MediaQuery.of(context).platformBrightness,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Поиск",
@@ -275,7 +273,7 @@ class _CompareArrowsButtonState extends State<CompareArrowsButton> with SingleTi
               turns: _animation,
               child: Icon(
                 Icons.compare_arrows,
-                color: _isPressed ? Colors.white24 : Color.lerp(Colors.white, Colors.white24, math.pow(1 - _controller.value, 0.2))
+                color: _isPressed ? Colors.white24 : Color.lerp(Colors.white, Colors.white24, math.pow(1 - _controller.value, 0.7))
               ),
             ),
           ),

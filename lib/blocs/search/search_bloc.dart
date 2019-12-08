@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app/shared/entity/word_card.dart';
 import 'package:async/async.dart';
 import 'package:app/shared/entity/language.dart';
 import 'package:app/shared/repository/word_card_repository.dart';
@@ -52,9 +53,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    print(state.isLoading);
     if (event is SearchTextEdited){
-      _cardsLoadingSubscription?.cancel();
       if (state.searchType == SearchType.Local){
         yield* _mapTextEdited(event.text);
       } else {
@@ -66,6 +65,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       yield* _mapLanguageChanged(event);
     } else if(event is SearchTypeChanged){
       yield* _mapSearchTypeChanged(event);
+    } else if (event is SearchRequestCreated){
+      yield state.copyWith(isLoading: true);
+    } else if (event is SearchRequestCanceled){
+      yield state.copyWith(isLoading: false);
     } else if (event is SearchRequestDone){
       yield* _mapSearchRequestDone(event);
     } else {
@@ -79,43 +82,50 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   }
 
   Stream<SearchState> _mapSearchTypeChanged(SearchTypeChanged event) async* {
-    var newState = state.copyWith(searchType: event.searchType);
-    yield newState;
+    yield state.copyWith(searchType: event.searchType);
     if (state.searchText != null && state.searchText.isNotEmpty){
       if ((event.searchType == SearchType.Global && state.globalCards == null) ||
           (event.searchType == SearchType.Local && state.localCards == null)){
-          yield newState.copyWith(isLoading: true);
-         _mapAsyncRequest(state.searchText, event.searchType);
+         _createRequest(state.searchText, event.searchType);
       }
     }
   }
 
-  void _mapAsyncRequest(String text, SearchType searchType){
-    _cardsLoadingSubscription = wordCardSearchRepository
+  void _cancelRequestIfActive(){
+    if (_cardsLoadingSubscription != null){
+      _cardsLoadingSubscription?.cancel();
+      _cardsLoadingSubscription = null;
+      this.add(SearchRequestCanceled());
+    }
+  }
+
+  void _createRequest(String text, SearchType searchType){
+    _cancelRequestIfActive();
+    _cardsLoadingSubscription = 
+      wordCardSearchRepository
       .find(text, searchType)
-      .asStream()
-      .listen((data){
-        this.add(SearchRequestDone(cards: data));
+      .asStream().listen((cards){
+        this.add(SearchRequestDone(
+          cards: cards
+        ));
       });
+    this.add(SearchRequestCreated());
   }
 
   Stream<SearchState> _mapTextEdited(String text) async* {
-    if (text.isEmpty && state.isLoading){
-      yield state.copyWith(isLoading: false);
-      return;
-    }
-
-    print(state.isLoading);
     if (state.searchText == text && !state.isLoading){
       return;
     }
 
-    var newState = state.noCards().copyWith(searchText: text);
-    yield newState;
+    yield state.noCards().copyWith(searchText: text);
+
+    if (text.isEmpty && state.isLoading){
+      _cancelRequestIfActive();
+      return;
+    }
 
     if (text.isNotEmpty){
-      yield newState.copyWith(isLoading: true);
-      _mapAsyncRequest(text, state.searchType);
+      _createRequest(text, state.searchType);
     }
   }
 

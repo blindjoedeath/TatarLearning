@@ -37,6 +37,14 @@ class SearchTypeChanged extends SearchEvent{
   const SearchTypeChanged({@required this.searchType});
 }
 
+class SearchRequestCreated extends SearchEvent{
+  const SearchRequestCreated();
+}	
+
+class SearchRequestCanceled extends SearchEvent{
+  const SearchRequestCanceled();
+}	
+
 class SearchRequestDone extends SearchEvent{
   final List<WordCard> cards;
 

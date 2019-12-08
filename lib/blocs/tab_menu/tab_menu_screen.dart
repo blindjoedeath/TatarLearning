@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app/blocs/search/search_builder.dart';
-import 'package:app/blocs/weather/weather_builder.dart';
 
 import 'tab_menu_bloc.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +18,7 @@ class TabMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: BlocBuilder<TabMenuBloc, TabMenuState>(
         bloc: menuBloc,
         builder: (context, state){

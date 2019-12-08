@@ -164,7 +164,7 @@ class _TatarKeyboardState extends State<TatarKeyboard> with WidgetsBindingObserv
     double newOffset = TatarKeyboardTheme.of(context).keyboardHeight; 
 
     newOffset += MediaQuery.of(context)
-        .viewInsets
+        .viewPadding
         .bottom;
 
     if (_offset != newOffset) {

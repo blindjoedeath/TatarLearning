@@ -5,7 +5,7 @@ class MockWordCardApiProvider {
 
   Future<List<WordCard>> fetchCards(String text) {
     return Future<List<WordCard>>.delayed(Duration(seconds: 2), (){
-      return List<WordCard>.generate(10, (index){
+      return List<WordCard>.generate(100, (index){
         return WordCard(
           word: "$text $index",
           description: "Description $index",

@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:app/shared/entity/language.dart';
 import 'package:app/shared/entity/word_card.dart';
 import 'package:app/tatar_keyboard/tatar_input.dart';
@@ -34,6 +36,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   ScrollController _scrollController;
   TextEditingController _textEditingController;
   TabController _tabController;
+  ValueNotifier _isEditing = ValueNotifier(false);
 
   void _disposeNode(FocusNode node){
     node?.unfocus();
@@ -48,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
     _scrollController?.dispose();
 
-    _textEditingController.removeListener(_textListener);
+    _textEditingController?.removeListener(_textListener);
     _textEditingController?.dispose();
     super.dispose();
   }
@@ -75,15 +78,32 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     super.initState();
   }
 
-  void _nodeListener(){
-    if (_rusFocusNode.hasFocus || _tatarFocusNode.hasFocus){
-      _scrollController.position.moveTo(0,
-        duration: Duration(milliseconds: 1000)
-      );
+  void _updateIsEditing(){
+    var value  = (_rusFocusNode.hasFocus || _tatarFocusNode.hasFocus)
+                  && _textEditingController.text.isEmpty;
+    if (value != _isEditing.value){
+      // because custom scroll rebuilds itself when has focus
+      if (value){
+        _isEditing.value = value;
+      } else {
+        WidgetsBinding.instance
+          .addPostFrameCallback((_) => _isEditing.value = value);
+      }
     }
   }
 
+  void _unfocus(){
+    _tatarFocusNode.unfocus();
+    _rusFocusNode.unfocus();
+    _updateIsEditing();
+  }
+
+  void _nodeListener()async{
+    _updateIsEditing();
+  }
+
   void _textListener(){
+    _updateIsEditing();
     var text = _textEditingController.text.trim();
     var event = SearchTextEdited(text: text);
     widget.searchBloc.add(event);
@@ -102,99 +122,140 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return TatarKeyboard(
-      child: CustomScrollView( 
-        controller: _scrollController,
-        slivers: [
-          BlocBuilder<SearchBloc, SearchState>(
-            bloc: widget.searchBloc,
-            builder: (context, state){
-              return SearchAppBarSliver(
-                focusNode: _getNode(state.searchLanguage),
-                searchBloc: widget.searchBloc,
-                textEditingController: _textEditingController,
-              );
-            },
-          ),
-          SearchTabBarSliver(
-            searchBloc: widget.searchBloc,
-            tabController: _tabController,
-          ),
-          SearchScreenBodySliver(
-            searchBloc: widget.searchBloc,
-            tabController: _tabController,
+    return NotificationListener(
+      child: TatarKeyboard(
+        child: CustomScrollView( 
+          controller: _scrollController,
+          slivers: [
+            BlocBuilder<SearchBloc, SearchState>(
+              bloc: widget.searchBloc,
+              builder: (context, state){
+                return SearchAppBarSliver(
+                  focusNode: _getNode(state.searchLanguage),
+                  searchBloc: widget.searchBloc,
+                  textEditingController: _textEditingController,
+                );
+              },
+            ),
+            ValueListenableBuilder(
+              valueListenable: _isEditing,
+              builder: (context, value, child){
+                if (value || !widget.searchBloc.state.isEmpty) {
+                  return SearchTabBarSliver(
+                    searchBloc: widget.searchBloc,
+                    tabController: _tabController,
+                  );
+                }
+                return SliverToBoxAdapter(
+                  child: Container()
+                );
+              },
+            ),
+            SearchScreenBodySliver(
+              searchBloc: widget.searchBloc,
+              tabController: _tabController,
+              isEditing: _isEditing,
+              onCoverTap: _unfocus,
+            )
+          ],
+        ),
+        tatarInputs: [
+          TatarInput(
+            focusNode: _tatarFocusNode,
+            textEditingController: _textEditingController
           )
         ],
       ),
-      tatarInputs: [
-        TatarInput(
-          focusNode: _tatarFocusNode,
-          textEditingController: _textEditingController
-        )
-      ],
+      onNotification: (notification){
+        if(notification is UserScrollNotification){
+          _unfocus();
+        }
+        return false;
+      },
     );
   }
 }
 
-class SearchScreenBodySliver extends StatelessWidget{
+class SearchScreenBodySliver extends StatefulWidget{
 
   final SearchBloc searchBloc;
-  final Widget child;
   final TabController tabController;
+  final void Function() onCoverTap;
+  final ValueNotifier isEditing;
 
-  const SearchScreenBodySliver({@required this.searchBloc, @required this.tabController, this.child});
+  const SearchScreenBodySliver({@required this.searchBloc, @required this.tabController,
+                                 @required this.isEditing, @required this.onCoverTap});
+
+  @override
+  State<StatefulWidget> createState() => _SearchScreenBodySliver();
+
+}
+
+class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   Widget _buildIndicator(){
-    return Center(
-      child: CircularProgressIndicator()
+    return SliverFillRemaining(
+      child: Center(
+        child: CircularProgressIndicator()
+      )
     );
   }
 
   Widget _buildDefaultScreen(){
-    return Center(
-      child: Text("waiting")
+    return SliverFillRemaining(
+      child: Stack(
+        children: <Widget>[
+          Center(
+            child: Text("waiting")
+          ),
+          ValueListenableBuilder(
+            valueListenable: widget.isEditing,
+            builder: (context, editing, child){
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 250),
+                color: editing ? Colors.black45 : Colors.transparent,
+                child: GestureDetector(
+                  onTap: widget.onCoverTap
+                )
+              );
+            }
+          ),
+        ],
+      )
     );
   }
 
-  Widget _buildCardsList(List<WordCard> cards){
-    return ListView.builder(
-      addRepaintBoundaries: true,
-      itemBuilder: (context, index){
-        return ListTile(
-          title: Text(cards[index].word),
-        );
-      },
-      itemCount: cards.length,
-    );
-  }
-
-  Widget _buildTab({bool isGlobal}){
-    return BlocBuilder<SearchBloc, SearchState>(
-      bloc: searchBloc,
-      builder: (context, state){
-        if (state.isEmpty){
-          return _buildDefaultScreen();
-        }else if(state.isLoading){
-          return _buildIndicator();
-        } else{
-          var cards = isGlobal ? state.globalCards : state.localCards;
-          return _buildCardsList(cards);
-        }
-      },
+  Widget _buildListView({List<WordCard> cards}){
+    if (cards == null){
+      return Container();
+    }
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index){
+          return ListTile(
+            title: Text(cards[index].word)
+          );
+        },
+        childCount: cards.length,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: TabBarView(
-        controller: tabController,
-        children: <Widget>[
-          _buildTab(isGlobal: true),
-          _buildTab(isGlobal: false)
-        ],
-      ),
+    return BlocBuilder<SearchBloc, SearchState>(
+      bloc: widget.searchBloc,
+      builder: (context, state){
+        if (state.isEmpty){
+          return _buildDefaultScreen();
+        } else if (state.isLoading){
+          return _buildIndicator();
+        }
+        return _buildListView(
+          cards: state.searchType == SearchType.Global ?
+                 state.globalCards : state.localCards
+        );
+      },
     );
   }
-
 }
