@@ -58,6 +58,31 @@ class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegat
     );
   }
 
+  Widget _buildTextField(BuildContext context){
+    return Expanded(
+      child: TextField(
+        inputFormatters: [WhitelistingTextInputFormatter(
+          RegExp("[a-zA-zа-яА-Я ]"),
+        )],
+        textInputAction: TextInputAction.search,
+        scrollPadding: EdgeInsets.only(top: statusBarHeight + _searchBarHeight),
+        focusNode: focusNode,
+        autocorrect: false,
+        controller: textEditingController,
+        keyboardAppearance: MediaQuery.of(context).platformBrightness,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "Поиск",
+          suffixIcon: textEditingController.text.isNotEmpty ? 
+            IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () => WidgetsBinding.instance.addPostFrameCallback((_) => textEditingController.clear())  
+            ) : Container(width: 0, height: 0),
+        ),
+      )
+    );
+  }
+
   Widget _buildSearchBar(BuildContext context){
     return Container(
       height: 40,
@@ -74,23 +99,7 @@ class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegat
                   color: Colors.black45
                 ),
               ),
-              Expanded(
-                child: TextField(
-                  inputFormatters: [WhitelistingTextInputFormatter(
-                    RegExp("[a-zA-zа-яА-Я ]"),
-                  )],
-                  textInputAction: TextInputAction.search,
-                  scrollPadding: EdgeInsets.only(top: statusBarHeight + _searchBarHeight),
-                  focusNode: focusNode,
-                  autocorrect: false,
-                  controller: textEditingController,
-                  keyboardAppearance: MediaQuery.of(context).platformBrightness,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Поиск",
-                  ),
-                )
-              )
+              _buildTextField(context)
             ],
           )
         ),

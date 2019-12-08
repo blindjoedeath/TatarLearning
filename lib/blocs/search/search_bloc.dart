@@ -22,7 +22,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
     return _debounceSubject.stream
       .where((event) => event is SearchTextEdited)
       .cast<SearchTextEdited>()
-      .debounceTime(Duration(milliseconds: 250))
+      .debounce((event){
+        var time = event.text.isNotEmpty ? 250 : 0;
+        return TimerStream(true, Duration(milliseconds: time));
+      })
       .distinct()
       .switchMap((e){
         var event = SearchTextEditingDone(text: e.text);

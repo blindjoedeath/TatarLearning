@@ -151,11 +151,16 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                 );
               },
             ),
-            SearchScreenBodySliver(
-              searchBloc: widget.searchBloc,
-              tabController: _tabController,
-              isEditing: _isEditing,
-              onCoverTap: _unfocus,
+            ValueListenableBuilder(
+              valueListenable: _isEditing,
+              builder: (context, value, child){
+                return SearchScreenBodySliver(
+                  searchBloc: widget.searchBloc,
+                  tabController: _tabController,
+                  isEditing: value,
+                  onCoverTap: _unfocus,
+                );
+              }
             )
           ],
         ),
@@ -181,7 +186,7 @@ class SearchScreenBodySliver extends StatefulWidget{
   final SearchBloc searchBloc;
   final TabController tabController;
   final void Function() onCoverTap;
-  final ValueNotifier isEditing;
+  final bool isEditing;
 
   const SearchScreenBodySliver({@required this.searchBloc, @required this.tabController,
                                  @required this.isEditing, @required this.onCoverTap});
@@ -208,18 +213,13 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
           Center(
             child: Text("waiting")
           ),
-          ValueListenableBuilder(
-            valueListenable: widget.isEditing,
-            builder: (context, editing, child){
-              return AnimatedContainer(
-                duration: Duration(milliseconds: 250),
-                color: editing ? Colors.black45 : Colors.transparent,
-                child: GestureDetector(
-                  onTap: widget.onCoverTap
-                )
-              );
-            }
-          ),
+          AnimatedContainer(
+            duration: Duration(milliseconds: 250),
+            color: widget.isEditing ? Colors.black45 : Colors.transparent,
+            child: GestureDetector(
+              onTap: widget.onCoverTap
+            )
+          )
         ],
       )
     );
