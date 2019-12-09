@@ -37,6 +37,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   TextEditingController _textEditingController;
   TabController _tabController;
   ValueNotifier _isEditing = ValueNotifier(false);
+  SearchAppBarSliver _appBar;
+  SearchTabBarSliver _tabBar;
 
   void _disposeNode(FocusNode node){
     node?.unfocus();
@@ -130,21 +132,23 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             BlocBuilder<SearchBloc, SearchState>(
               bloc: widget.searchBloc,
               builder: (context, state){
-                return SearchAppBarSliver(
+                _appBar = SearchAppBarSliver(
                   focusNode: _getNode(state.searchLanguage),
                   searchBloc: widget.searchBloc,
                   textEditingController: _textEditingController,
                 );
+                return _appBar;
               },
             ),
             ValueListenableBuilder(
               valueListenable: _isEditing,
               builder: (context, value, child){
                 if (value || !widget.searchBloc.state.isEmpty) {
-                  return SearchTabBarSliver(
+                  _tabBar = SearchTabBarSliver(
                     searchBloc: widget.searchBloc,
                     tabController: _tabController,
                   );
+                  return _tabBar;
                 }
                 return SliverToBoxAdapter(
                   child: Container()
@@ -206,22 +210,42 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
     );
   }
 
-  Widget _buildDefaultScreen(){
-    return SliverFillRemaining(
-      child: Stack(
-        children: <Widget>[
-          Center(
-            child: Text("waiting")
-          ),
-          AnimatedContainer(
-            duration: Duration(milliseconds: 250),
-            color: widget.isEditing ? Colors.black45 : Colors.transparent,
-            child: GestureDetector(
-              onTap: widget.onCoverTap
+  Widget _buildDefaultScreen(BuildContext context){
+    return SliverLayoutBuilder(
+      builder: (context, constraints){
+        var height = constraints.viewportMainAxisExtent;
+        return SliverToBoxAdapter(
+          child: Container(
+            height: height,
+            child: Stack(
+              children: <Widget>[
+                ListView.builder(
+                  itemBuilder: (context, index){
+                    if (index == 0 || index == 4){
+                      return ListTile(
+                        title: Text(index == 0 ? "Недавние" : "Популярные", 
+                          style: Theme.of(context).textTheme.headline,
+                        )
+                      );
+                    }
+                    return ListTile(
+                      title: Text("text"),
+                    );
+                  },
+                  itemCount: 8,
+                ),
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 250),
+                  color: widget.isEditing ? Colors.black45 : Colors.transparent,
+                  child: GestureDetector(
+                    onTap: widget.onCoverTap,
+                  )
+                )
+              ],
             )
           )
-        ],
-      )
+        );
+      }
     );
   }
 
@@ -247,7 +271,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
       bloc: widget.searchBloc,
       builder: (context, state){
         if (state.isEmpty){
-          return _buildDefaultScreen();
+          return _buildDefaultScreen(context);
         } else if (state.isLoading){
           return _buildIndicator();
         }
