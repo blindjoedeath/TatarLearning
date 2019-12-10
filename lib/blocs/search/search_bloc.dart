@@ -97,8 +97,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   Stream<SearchState> _mapUserExplored(String query)async*{
     var history = state.searchHistory;
+    print(state.searchHistory.value);
     history.add(query);
     yield state.copyWith(searchHistory: history);
+    print(history.value);
   }
 
   Stream<SearchState> _mapLanguageChanged(SearchLanguageChanged event) async* {

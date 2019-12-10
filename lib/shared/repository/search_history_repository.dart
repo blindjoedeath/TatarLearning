@@ -10,20 +10,21 @@ class SearchHistoryRepository{
   bool get isInited => Hive.isBoxOpen(kQueriesKey);
 
   Future init()async{
-    await Hive.openBox(kQueriesKey);
+    await Hive.openBox<SearchQueries>(kQueriesKey);
   }
 
   SearchQueries get(){
-    return Hive.box(kQueriesKey).get(kQueriesKey, defaultValue: SearchQueries());
+    print(Hive.box<SearchQueries>(kQueriesKey).get(kQueriesKey, defaultValue: SearchQueries()).value);
+    return Hive.box<SearchQueries>(kQueriesKey).get(kQueriesKey, defaultValue: SearchQueries());
   }
 
   Future<void> save(SearchQueries query)async{
-    return Hive.box(kQueriesKey).put(kQueriesKey, query);
+    return Hive.box<SearchQueries>(kQueriesKey).put(kQueriesKey, query);
   }
 
   void dispose(){
     if (isInited){
-      Hive.box(kQueriesKey).close();
+      Hive.box<SearchQueries>(kQueriesKey).close();
     }
   }
 

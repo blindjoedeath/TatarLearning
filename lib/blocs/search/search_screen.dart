@@ -6,6 +6,7 @@ import 'package:app/shared/entity/word_card.dart';
 import 'package:app/tatar_keyboard/tatar_input.dart';
 import 'package:app/tatar_keyboard/tatar_keyboard_impl.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:statusbar/statusbar.dart';
 
 import 'search_app_bar.dart';
@@ -237,6 +238,8 @@ class SearchScreenBodySliver extends StatefulWidget{
 
 class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
+  double _kListTileExtend = 48;
+
   Widget _buildIndicator(){
     return SliverFillRemaining(
       child: Center(
@@ -248,6 +251,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
   Widget _buildDefaultScreenList(SearchState state){
     if (state.searchHistory != null){
       return ListView.builder(
+        itemExtent: _kListTileExtend,
         itemBuilder: (context, index){
           if (index == 0 || index == 4){
             return ListTile(
@@ -272,13 +276,22 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
   return Container();
   }
 
+  double _heightOfList(SearchState state, SliverConstraints constraints){
+    var history = state.searchHistory.value.length;
+    history = history > 0 ? history + 1 : history;
+    var popular = 3;
+    popular = popular > 0 ? popular + 1 : popular;
+    var height = (history + popular) * _kListTileExtend;
+    var minHeight = constraints.viewportMainAxisExtent - constraints.precedingScrollExtent + 1;
+    return height > minHeight ? height : minHeight;
+  }
+
   Widget _buildDefaultScreen(SearchState state){
     return SliverLayoutBuilder(
       builder: (context, constraints){
-        var height = constraints.viewportMainAxisExtent;
         return SliverToBoxAdapter(
           child: Container(
-            height: height,
+            height: _heightOfList(state, constraints),
             child: Stack(
               children: <Widget>[
                 _buildDefaultScreenList(state),
