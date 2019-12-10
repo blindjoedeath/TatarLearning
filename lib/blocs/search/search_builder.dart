@@ -1,3 +1,4 @@
+import 'package:app/shared/repository/search_history_repository.dart';
 import 'package:app/shared/repository/word_card_repository.dart';
 
 import 'search_screen.dart';
@@ -14,34 +15,10 @@ class SearchBuilder extends StatefulWidget {
 
 class _SearchBuilderState extends State<SearchBuilder>{
 
-  SearchBloc _searchBloc;
-  WordCardSearchRepository _wordCardSearchRepository;
-
-  @override
-  void initState() {
-    _wordCardSearchRepository = WordCardSearchRepository();
-    _searchBloc = SearchBloc(
-      wordCardSearchRepository: _wordCardSearchRepository
-    );
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _searchBloc?.close();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      builder: (context) => _wordCardSearchRepository, 
-      child: BlocProvider<SearchBloc>.value(
-        value: _searchBloc,
-        child: SearchScreen(
-          searchBloc: _searchBloc,
-        ),
-      )
+    return SearchScreen(
+      searchBloc: BlocProvider.of<SearchBloc>(context),
     );
   }
 

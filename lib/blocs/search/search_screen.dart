@@ -37,6 +37,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   TextEditingController _textEditingController;
   TabController _tabController;
   ValueNotifier _isEditing = ValueNotifier(false);
+  ValueNotifier _isHasFocus = ValueNotifier(false);
   SearchAppBarSliver _appBar;
   SearchTabBarSliver _tabBar;
 
@@ -80,35 +81,64 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     super.initState();
   }
 
-  void _updateIsEditing(){
-    var value  = (_rusFocusNode.hasFocus || _tatarFocusNode.hasFocus)
-                  && _textEditingController.text.isEmpty;
-    if (value != _isEditing.value){
+  void _updateValueNotifier(ValueNotifier notifier, bool value){
+    if (value != notifier.value){
       // because custom scroll rebuilds itself when has focus
       if (value){
-        _isEditing.value = value;
+        notifier.value = value;
       } else {
         WidgetsBinding.instance
-          .addPostFrameCallback((_) => _isEditing.value = value);
+          .addPostFrameCallback((_) => notifier.value = value);
       }
     }
   }
 
+  void _updateIsEditing(){
+    var value  = (_rusFocusNode.hasFocus || _tatarFocusNode.hasFocus)
+                  && _textEditingController.text.isEmpty;
+    _updateValueNotifier(_isEditing, value);
+  }
+
+  void _updateIsHasFocus(){
+    var value  = _rusFocusNode.hasFocus || _tatarFocusNode.hasFocus;
+    _updateValueNotifier(_isHasFocus, value);
+  }
+
+  String previousQuery;
+  void _updateSearchHistory(){
+    if (widget.searchBloc.state.isSearchDone){
+      var query = _textEditingController.text.trim();
+      if (query != previousQuery){
+        previousQuery = query;
+        widget.searchBloc.add(UserExploredSearchResult(
+          query: query
+        ));
+      }
+    }
+  }
+  
   void _unfocus(){
     _tatarFocusNode.unfocus();
     _rusFocusNode.unfocus();
     _updateIsEditing();
+    _updateIsHasFocus();
+    _updateSearchHistory();
   }
 
   void _nodeListener()async{
     _updateIsEditing();
+    _updateIsHasFocus();
   }
 
   void _textListener(){
-    _updateIsEditing();
     var text = _textEditingController.text.trim();
     var event = SearchTextEdited(text: text);
     widget.searchBloc.add(event);
+    _updateIsEditing();
+    _updateIsHasFocus();
+    if (text.isNotEmpty){
+      _updateSearchHistory();
+    }
   }
 
   FocusNode _getNode(Language language){
@@ -141,17 +171,22 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               },
             ),
             ValueListenableBuilder(
-              valueListenable: _isEditing,
+              valueListenable: _isHasFocus,
               builder: (context, value, child){
-                if (value || !widget.searchBloc.state.isEmpty) {
-                  _tabBar = SearchTabBarSliver(
-                    searchBloc: widget.searchBloc,
-                    tabController: _tabController,
-                  );
-                  return _tabBar;
-                }
-                return SliverToBoxAdapter(
-                  child: Container()
+                return BlocBuilder<SearchBloc, SearchState>(
+                  bloc: widget.searchBloc,
+                  builder: (context, state){
+                    if (value || !state.isEmpty) {
+                      _tabBar = SearchTabBarSliver(
+                        searchBloc: widget.searchBloc,
+                        tabController: _tabController,
+                      );
+                      return _tabBar;
+                    }
+                    return SliverToBoxAdapter(
+                      child: Container()
+                    );
+                  },
                 );
               },
             ),
@@ -210,7 +245,34 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
     );
   }
 
-  Widget _buildDefaultScreen(BuildContext context){
+  Widget _buildDefaultScreenList(SearchState state){
+    if (state.searchHistory != null){
+      return ListView.builder(
+        itemBuilder: (context, index){
+          if (index == 0 || index == 4){
+            return ListTile(
+              title: Text(index == 0 ? "Недавние" : "Популярные", 
+                style: Theme.of(context).textTheme.headline,
+              )
+            );
+          }
+          var queries = state.searchHistory.value.reversed.toList();
+          if (index-1 < queries.length){
+            return ListTile(
+              title: Text(queries[index-1]),
+            );
+          }
+          return ListTile(
+            title: Text("text"),
+          );
+        },
+        itemCount: 8,
+      );
+    }
+  return Container();
+  }
+
+  Widget _buildDefaultScreen(SearchState state){
     return SliverLayoutBuilder(
       builder: (context, constraints){
         var height = constraints.viewportMainAxisExtent;
@@ -219,21 +281,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
             height: height,
             child: Stack(
               children: <Widget>[
-                ListView.builder(
-                  itemBuilder: (context, index){
-                    if (index == 0 || index == 4){
-                      return ListTile(
-                        title: Text(index == 0 ? "Недавние" : "Популярные", 
-                          style: Theme.of(context).textTheme.headline,
-                        )
-                      );
-                    }
-                    return ListTile(
-                      title: Text("text"),
-                    );
-                  },
-                  itemCount: 8,
-                ),
+                _buildDefaultScreenList(state),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 250),
                   color: widget.isEditing ? Colors.black45 : Colors.transparent,
@@ -271,7 +319,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
       bloc: widget.searchBloc,
       builder: (context, state){
         if (state.isEmpty){
-          return _buildDefaultScreen(context);
+          return _buildDefaultScreen(state);
         } else if (state.isLoading){
           return _buildIndicator();
         }

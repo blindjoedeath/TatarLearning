@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:app/shared/entity/search_queries.dart';
 import 'package:app/shared/entity/word_card.dart';
+import 'package:app/shared/repository/search_history_repository.dart';
 import 'package:async/async.dart';
 import 'package:app/shared/entity/language.dart';
 import 'package:app/shared/repository/word_card_repository.dart';
@@ -14,9 +16,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   final WordCardSearchRepository wordCardSearchRepository;
 
+  final SearchHistoryRepository searchHistoryRepository;
+
   final PublishSubject<SearchTextEdited> _debounceSubject = PublishSubject<SearchTextEdited>();
 
   StreamSubscription _cardsLoadingSubscription;
+
+  bool get isInited => searchHistoryRepository.isInited;
+
+  Future init(){
+    return searchHistoryRepository.init();
+  }
   
   Stream<SearchState> get _debounceStates{
     return _debounceSubject.stream
@@ -33,10 +43,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       }).share();
   }
 
-  SearchBloc({@required this.wordCardSearchRepository}) : assert(wordCardSearchRepository != null);
+  SearchBloc({@required this.wordCardSearchRepository,
+              @required this.searchHistoryRepository})
+    : assert(wordCardSearchRepository != null),
+      assert(searchHistoryRepository != null);
 
   @override
   close(){
+    searchHistoryRepository.save(state.searchHistory);
     _debounceSubject?.close();
     _cardsLoadingSubscription?.cancel();
     super.close();
@@ -45,7 +59,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   SearchState get initialState => SearchState(
     searchLanguage: Language.Russian,
     searchType: SearchType.Local,
-    searchText: ""
+    searchText: "",
+    searchHistory: isInited ? searchHistoryRepository.get() : SearchQueries()
   );
 
   @override
@@ -53,6 +68,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
     var nonDebounceStates = super.transformEvents(events, next) as Observable<SearchState>;
     return nonDebounceStates.mergeWith([_debounceStates]);
   }
+  
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
@@ -74,9 +90,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       yield state.copyWith(isLoading: false);
     } else if (event is SearchRequestDone){
       yield* _mapSearchRequestDone(event);
-    } else {
-      yield state.copyWith();
+    } else if (event is UserExploredSearchResult){
+      yield* _mapUserExplored(event.query);
     }
+  }
+
+  Stream<SearchState> _mapUserExplored(String query)async*{
+    var history = state.searchHistory;
+    history.add(query);
+    yield state.copyWith(searchHistory: history);
   }
 
   Stream<SearchState> _mapLanguageChanged(SearchLanguageChanged event) async* {

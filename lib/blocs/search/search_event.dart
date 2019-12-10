@@ -11,6 +11,8 @@ abstract class SearchEvent extends Equatable {
 
 }
 
+class HistoryRepositoryInited extends SearchEvent{}
+
 class SearchTextEdited extends SearchEvent{
   final String text;
 
@@ -50,3 +52,9 @@ class SearchRequestDone extends SearchEvent{
 
   const SearchRequestDone({@required this.cards});
 }			
+
+class UserExploredSearchResult extends SearchEvent{
+  final String query;
+
+  const UserExploredSearchResult({@required this.query});
+}
