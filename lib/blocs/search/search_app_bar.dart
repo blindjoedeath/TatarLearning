@@ -1,4 +1,5 @@
 import 'package:app/shared/entity/language.dart';
+import 'package:app/tatar_keyboard/tatar_key_row.dart';
 import 'package:flutter/services.dart';
 import 'package:statusbar/statusbar.dart';
 
@@ -62,7 +63,7 @@ class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegat
     return Expanded(
       child: TextField(
         inputFormatters: [WhitelistingTextInputFormatter(
-          RegExp("[a-zA-zа-яА-Я ]"),
+          RegExp("[a-zA-zа-яА-Я " + TatarCharacters.join() + "]"),
         )],
         textInputAction: TextInputAction.search,
         scrollPadding: EdgeInsets.only(top: statusBarHeight + _searchBarHeight),
