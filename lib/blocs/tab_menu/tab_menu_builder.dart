@@ -1,8 +1,8 @@
 import 'package:app/blocs/search/search_bloc.dart';
 import 'package:app/blocs/tab_menu/tab_menu_screen.dart';
+import 'package:app/shared/repository/app_state_repository.dart';
 import 'package:app/shared/repository/search_history_repository.dart';
 import 'package:app/shared/repository/word_card_repository.dart';
-import 'package:hive/hive.dart';
 import 'tab_menu_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +21,7 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
   void initState() {
     _searchBloc = SearchBloc(
       wordCardSearchRepository: WordCardSearchRepository(),
-      searchHistoryRepository: SearchHistoryRepository()
+      searchHistoryRepository: SearchHistoryRepository(),
     );
 
     _bloc = TabMenuBloc(

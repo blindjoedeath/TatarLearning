@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:app/shared/entity/search_queries.dart';
 import 'package:app/shared/entity/word_card.dart';
+import 'package:app/shared/repository/app_state_repository.dart';
 import 'package:app/shared/repository/search_history_repository.dart';
 import 'package:async/async.dart';
 import 'package:app/shared/entity/language.dart';
@@ -24,8 +25,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   bool get isInited => searchHistoryRepository.isInited;
 
-  Future init(){
-    return searchHistoryRepository.init();
+  Future init()async{
+    await searchHistoryRepository.init();
+    add(HistoryRepositoryInited());
   }
   
   Stream<SearchState> get _debounceStates{
@@ -50,7 +52,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   @override
   close(){
-    searchHistoryRepository.save(state.searchHistory);
     _debounceSubject?.close();
     _cardsLoadingSubscription?.cancel();
     super.close();
@@ -60,7 +61,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
     searchLanguage: Language.Russian,
     searchType: SearchType.Local,
     searchText: "",
-    searchHistory: isInited ? searchHistoryRepository.get() : SearchQueries()
   );
 
   @override
@@ -69,10 +69,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
     return nonDebounceStates.mergeWith([_debounceStates]);
   }
   
-
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    if (event is SearchTextEdited){
+    if (event is HistoryRepositoryInited){
+      yield state.copyWith(searchHistory: searchHistoryRepository.get());
+    } else if (event is SearchTextEdited){
       if (state.searchType == SearchType.Local || event.isLastCharacter){
         yield* _mapTextEdited(event.text);
       } else {
@@ -98,6 +99,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   Stream<SearchState> _mapUserExplored(String query)async*{
     var history = state.searchHistory;
     history.add(query);
+    await searchHistoryRepository.save(history);
     yield state.copyWith(searchHistory: history);
   }
 

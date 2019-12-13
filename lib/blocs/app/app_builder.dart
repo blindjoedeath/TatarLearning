@@ -1,4 +1,5 @@
 import 'package:app/blocs/app/app_screen.dart';
+import 'package:app/shared/repository/app_state_repository.dart';
 import 'package:app/shared/repository/welcomed_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,16 +33,17 @@ class _AppBuilderState extends State<AppBuilder>{
 
   @override
   Widget build(BuildContext context) {
-
+    var appScreen = AppScreen(
+      appBloc: bloc,
+    );
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<WelcomedRepository>(builder: (context) => welcomedRepository,),
+        RepositoryProvider<AppStateRepository>(builder: (context) => appScreen),
       ],
       child: BlocProvider<AppBloc>.value(
         value: bloc,
-        child: AppScreen(
-          appBloc: bloc,
-        ),
+        child: appScreen
       ),
     );
   }

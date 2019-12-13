@@ -14,7 +14,6 @@ class SearchHistoryRepository{
   }
 
   SearchQueries get(){
-    print(Hive.box<SearchQueries>(kQueriesKey).get(kQueriesKey, defaultValue: SearchQueries()).value);
     return Hive.box<SearchQueries>(kQueriesKey).get(kQueriesKey, defaultValue: SearchQueries());
   }
 
