@@ -15,17 +15,18 @@ class HistoryRepositoryInited extends SearchEvent{}
 
 class SearchTextEdited extends SearchEvent{
   final String text;
+  final bool isLastCharacter;
 
-  const SearchTextEdited({@required this.text});
+  const SearchTextEdited({@required this.text, this.isLastCharacter = false});
 
   @override
   List<Object> get props => [text];
 }
 
-class SearchTextEditingDone extends SearchEvent{
+class SearchTextEditingDebounced extends SearchEvent{
   final String text;
 
-  const SearchTextEditingDone({@required this.text});
+  const SearchTextEditingDebounced({@required this.text});
 
   @override
   List<Object> get props => [text];

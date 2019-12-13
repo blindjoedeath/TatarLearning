@@ -33,12 +33,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       .where((event) => event is SearchTextEdited)
       .cast<SearchTextEdited>()
       .debounce((event){
-        var time = event.text.isNotEmpty ? 250 : 0;
+        var time = event.text.isNotEmpty ? 2000 : 0;
         return TimerStream(true, Duration(milliseconds: time));
       })
       .distinct()
       .switchMap((e){
-        var event = SearchTextEditingDone(text: e.text);
+        var event = SearchTextEditingDebounced(text: e.text);
         return mapEventToState(event);
       }).share();
   }
@@ -73,12 +73,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is SearchTextEdited){
-      if (state.searchType == SearchType.Local){
+      if (state.searchType == SearchType.Local || event.isLastCharacter){
         yield* _mapTextEdited(event.text);
       } else {
         _debounceSubject.add(event);
       }
-    } else if(event is SearchTextEditingDone){
+    } else if(event is SearchTextEditingDebounced){
       yield* _mapTextEdited(event.text);
     } else if (event is SearchLanguageChanged){
       yield* _mapLanguageChanged(event);
@@ -97,10 +97,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
   Stream<SearchState> _mapUserExplored(String query)async*{
     var history = state.searchHistory;
-    print(state.searchHistory.value);
     history.add(query);
     yield state.copyWith(searchHistory: history);
-    print(history.value);
   }
 
   Stream<SearchState> _mapLanguageChanged(SearchLanguageChanged event) async* {

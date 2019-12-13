@@ -107,7 +107,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
   String previousQuery;
   void _updateSearchHistory(){
-    if (widget.searchBloc.state.isSearchDone){
+    if (!widget.searchBloc.state.isEmpty){
       var query = _textEditingController.text.trim();
       if (query != previousQuery){
         previousQuery = query;
@@ -131,14 +131,24 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _updateIsHasFocus();
   }
 
+  bool get _isSearchPressed{
+    var hasFocus = _tatarFocusNode.hasFocus || _rusFocusNode.hasFocus;
+    var selection = _textEditingController.value.selection;
+    return !hasFocus && selection.baseOffset == -1 && selection.extentOffset == -1;
+  }
+
   void _textListener(){
     var text = _textEditingController.text.trim();
-    var event = SearchTextEdited(text: text);
+    var event = SearchTextEdited(
+      text: text,
+      isLastCharacter: _isSearchPressed
+    );
     widget.searchBloc.add(event);
     _updateIsEditing();
     _updateIsHasFocus();
-    if (text.isNotEmpty){
-      _updateSearchHistory();
+    if (_isSearchPressed){
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+        _updateSearchHistory()); 
     }
   }
 
@@ -146,7 +156,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     var newNode = language == Language.Russian ? _rusFocusNode : _tatarFocusNode;
     var previousNode = language == Language.Russian ? _tatarFocusNode : _rusFocusNode;
     if (previousNode.hasFocus){
-      FocusScope.of(context).requestFocus(newNode);
+      if (!newNode.hasFocus){
+        FocusScope.of(context).requestFocus(newNode);
+      }
       previousNode.unfocus();
       previousNode.notifyListeners();
     }
@@ -283,6 +295,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
     popular = popular > 0 ? popular + 1 : popular;
     var height = (history + popular) * _kListTileExtend;
     var minHeight = constraints.viewportMainAxisExtent - constraints.precedingScrollExtent + 1;
+    return 8 * _kListTileExtend;
     return height > minHeight ? height : minHeight;
   }
 
@@ -328,6 +341,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   @override
   Widget build(BuildContext context) {
+    
     return BlocBuilder<SearchBloc, SearchState>(
       bloc: widget.searchBloc,
       builder: (context, state){
