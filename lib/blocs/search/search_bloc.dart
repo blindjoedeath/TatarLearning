@@ -35,7 +35,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       .where((event) => event is SearchTextEdited)
       .cast<SearchTextEdited>()
       .debounce((event){
-        var time = event.text.isNotEmpty ? 2000 : 0;
+        var time = event.text.isNotEmpty ? 250 : 0;
         return TimerStream(true, Duration(milliseconds: time));
       })
       .distinct()
@@ -106,10 +106,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   Stream<SearchState> _mapLanguageChanged(SearchLanguageChanged event) async* {
     var lang = state.searchLanguage == Language.Russian ? Language.Tatar : Language.Russian;
     yield state.copyWith(searchLangage: lang);
+    if (state.searchText.isNotEmpty){
+      _createRequest(state.searchText, state.searchType);
+    }
   }
 
   Stream<SearchState> _mapSearchTypeChanged(SearchTypeChanged event) async* {
     yield state.copyWith(searchType: event.searchType);
+    _cancelRequestIfActive();
     if (state.searchText != null && state.searchText.isNotEmpty){
       if ((event.searchType == SearchType.Global && state.globalCards == null) ||
           (event.searchType == SearchType.Local && state.localCards == null)){

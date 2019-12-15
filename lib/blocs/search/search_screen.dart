@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:app/blocs/word_card_detail/word_card_detail_builder.dart';
 import 'package:app/shared/entity/language.dart';
 import 'package:app/shared/entity/word_card.dart';
 import 'package:app/tatar_keyboard/tatar_input.dart';
@@ -63,8 +64,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   @override
   void initState() {
     _textEditingController = new TextEditingController();
+    _textEditingController.text = widget.searchBloc.state.searchText;
     _textEditingController.addListener(_textListener);
-
+    
     _tatarFocusNode = FocusNode();
     _rusFocusNode = FocusNode();
 
@@ -211,6 +213,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                   tabController: _tabController,
                   isEditing: value,
                   onCoverTap: _unfocus,
+                  onPreviousQuery: (query){
+                    _unfocus();
+                    _textEditingController.text = query;
+                  },
                 );
               }
             )
@@ -237,11 +243,13 @@ class SearchScreenBodySliver extends StatefulWidget{
 
   final SearchBloc searchBloc;
   final TabController tabController;
+  final void Function(String) onPreviousQuery;
   final void Function() onCoverTap;
   final bool isEditing;
 
   const SearchScreenBodySliver({@required this.searchBloc, @required this.tabController,
-                                 @required this.isEditing, @required this.onCoverTap});
+                                 @required this.isEditing, @required this.onCoverTap,
+                                 @required this.onPreviousQuery});
 
   @override
   State<StatefulWidget> createState() => _SearchScreenBodySliver();
@@ -262,40 +270,51 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   Widget _buildDefaultScreenList(SearchState state){
     if (state.searchHistory != null){
-      return ListView.builder(
-        itemExtent: _kListTileExtend,
-        itemBuilder: (context, index){
-          if (index == 0 || index == 4){
+      return ListTileTheme(
+        selectedColor: Colors.black45,
+        child: ListView.separated(
+          separatorBuilder: (context, index) => Divider(
+            height: 0,
+            color: Colors.grey.withAlpha(200)
+          ),
+          itemBuilder: (context, index){
+            if (index == 0 || index == 4){
+              return ListTile(
+                title: Text(index == 0 ? "Недавние" : "Популярные", 
+                  style: Theme.of(context).textTheme.headline,
+                ),
+              );
+            }
+            var queries = state.searchHistory.value.reversed.toList();
+            if (index-1 < queries.length){
+              var query = queries[index-1];
+              return ListTile(
+                title: Text(query,
+                  style: Theme.of(context).textTheme.subhead.copyWith(
+                    color: Colors.black54),
+                ),
+                onTap: () => widget.onPreviousQuery(query)
+              );
+            }
             return ListTile(
-              title: Text(index == 0 ? "Недавние" : "Популярные", 
-                style: Theme.of(context).textTheme.headline,
-              )
+              title: Text("text $index"),
             );
-          }
-          var queries = state.searchHistory.value.reversed.toList();
-          if (index-1 < queries.length){
-            return ListTile(
-              title: Text(queries[index-1]),
-            );
-          }
-          return ListTile(
-            title: Text("text"),
-          );
-        },
-        itemCount: 8,
+          },
+          itemCount: 4,
+        )
       );
     }
-  return Container();
+    return Container();
   }
 
   double _heightOfList(SearchState state, SliverConstraints constraints){
     var history = state.searchHistory.value.length;
     history = history > 0 ? history + 1 : history;
-    var popular = 3;
+    var popular = 0;
     popular = popular > 0 ? popular + 1 : popular;
+    popular = 0;
     var height = (history + popular) * _kListTileExtend;
     var minHeight = constraints.viewportMainAxisExtent - constraints.precedingScrollExtent + 1;
-    return 8 * _kListTileExtend;
     return height > minHeight ? height : minHeight;
   }
 
@@ -310,10 +329,10 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
                 _buildDefaultScreenList(state),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 250),
-                  color: widget.isEditing ? Colors.black45 : Colors.transparent,
-                  child: GestureDetector(
+                  color: widget.isEditing ? Colors.black45 : null,
+                  child: widget.isEditing ? GestureDetector(
                     onTap: widget.onCoverTap,
-                  )
+                  ) : null
                 )
               ],
             )
@@ -327,15 +346,41 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
     if (cards == null){
       return Container();
     }
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index){
-          return ListTile(
-            title: Text(cards[index].word)
-          );
-        },
-        childCount: cards.length,
-      ),
+    return ListTileTheme(
+      selectedColor: Colors.black45,
+      child: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index){
+            var card = cards[index];
+            return ListTile(
+              title: Text(card.word),
+              subtitle: Text(card.translates[0]),
+              leading: Padding(
+                padding: EdgeInsets.all(6),
+                child: Hero(
+                  tag: "card-${card.translates.hashCode}",
+                  child: FadeInImage(
+                    image: NetworkImage(card.imageUrl),
+                    placeholder: AssetImage("images/100.png"),
+                  )
+                )
+              ),
+              onTap: (){
+                Navigator.push(context,
+                  PageRouteBuilder(
+                    pageBuilder: (c, a1, a2) => WordCardDetailBuilder(
+                       wordCard: card,
+                     ),
+                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                    transitionDuration: Duration(milliseconds: 350),
+                  )
+                );
+              },
+            );
+          },
+          childCount: cards.length,
+        ),
+      )
     );
   }
 
