@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/blocs/home/home_builder.dart';
 import 'package:app/blocs/search/search_builder.dart';
 
 import 'tab_menu_bloc.dart';
@@ -23,9 +24,7 @@ class TabMenuScreen extends StatelessWidget {
         bloc: menuBloc,
         builder: (context, state){
           if (state is HomeTab){
-            return Center(
-              child: Text("Home"),
-            );
+            return HomeBuilder();
           } else if (state is SearchTab){
             return SearchBuilder();
           }  

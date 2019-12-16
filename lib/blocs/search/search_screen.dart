@@ -73,7 +73,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _scrollController = ScrollController();
 
     _tabController = TabController(
-      initialIndex: widget.searchBloc.initialState.searchType == SearchType.Global ? 0 : 1,
+      initialIndex: widget.searchBloc.state.searchType == SearchType.Global ? 0 : 1,
       length: 2,    
       vsync: this
     );
@@ -270,6 +270,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   Widget _buildDefaultScreenList(SearchState state){
     if (state.searchHistory != null){
+      var quieriesCount = state.searchHistory.value.length;
       return ListTileTheme(
         selectedColor: Colors.black45,
         child: ListView.separated(
@@ -286,7 +287,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
               );
             }
             var queries = state.searchHistory.value.reversed.toList();
-            if (index-1 < queries.length){
+            if (index-1 < quieriesCount){
               var query = queries[index-1];
               return ListTile(
                 title: Text(query,
@@ -300,7 +301,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
               title: Text("text $index"),
             );
           },
-          itemCount: 4,
+          itemCount: quieriesCount > 0 ? quieriesCount+1 : 0,
         )
       );
     }
@@ -377,7 +378,13 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
                     pageBuilder: (c, a1, a2) => WordCardDetailBuilder(
                        wordCard: card,
                      ),
-                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(
+                      opacity: CurvedAnimation(
+                        curve: Curves.fastOutSlowIn,
+                        parent: anim,
+                      ),
+                      child: child)
+                      ,
                     transitionDuration: Duration(milliseconds: 350),
                   )
                 );
