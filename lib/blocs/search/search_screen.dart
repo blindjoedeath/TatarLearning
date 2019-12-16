@@ -359,10 +359,16 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
                 padding: EdgeInsets.all(6),
                 child: Hero(
                   tag: "card-${card.translates.hashCode}",
-                  child: FadeInImage(
-                    image: NetworkImage(card.imageUrl),
-                    placeholder: AssetImage("images/100.png"),
-                  )
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: FadeInImage(
+                      image: NetworkImage(card.imageUrl),
+                      placeholder: AssetImage("images/100.png"),
+                      fit: BoxFit.cover,
+                      height: 40,
+                      width: 40,
+                    )
+                  ),
                 )
               ),
               onTap: (){

@@ -21,17 +21,17 @@ class WordCardDetailScreen extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Hero(
-            tag: "card-${wordCard.translates.hashCode}",
-            child:Container(
-              padding: EdgeInsets.only(top: 20, bottom: 20),
-              alignment: Alignment.center,
-              height: 350,
+          Container(
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            alignment: Alignment.center,
+            child: Hero(
+              tag: "card-${wordCard.translates.hashCode}",
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
                   wordCard.imageUrl,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fitHeight,
+                  width: 240,
                 ),
               )
             ),
