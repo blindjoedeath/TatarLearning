@@ -1,3 +1,4 @@
+import 'package:app/blocs/what_is_game/what_is_game_builder.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'home_builder.dart';
@@ -59,7 +60,22 @@ class HomeScreen extends StatelessWidget {
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => print("tap"),
+                      onTap: () {
+                         Navigator.push(context,
+                          PageRouteBuilder(
+                            pageBuilder: (c, a1, a2) => WhatIsGameBuilder(
+                            ),
+                            transitionsBuilder: (c, anim, a2, child) => FadeTransition(
+                              opacity: CurvedAnimation(
+                                curve: Curves.fastOutSlowIn,
+                                parent: anim,
+                              ),
+                              child: child)
+                              ,
+                            transitionDuration: Duration(milliseconds: 350),
+                          )
+                        );
+                      },
                     )
                   )
                 ]
