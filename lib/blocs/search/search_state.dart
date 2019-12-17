@@ -13,7 +13,7 @@ class SearchState extends Equatable {
   final SearchType searchType;
   final String searchText;
   final bool isLoading;
-  bool get isEmpty => !isLoading && globalCards == null && localCards == null;
+  bool get isEmpty => !isLoading && globalCards == null && searchType == SearchType.Global;
   bool get isSearchDone => !isEmpty && !isLoading;
   final List<WordCard> globalCards;
   final List<WordCard> localCards;
@@ -42,13 +42,14 @@ class SearchState extends Equatable {
     );
   }
 
-  SearchState noCards(){
+  SearchState noGlobalCards(){
     return SearchState(
       searchLanguage: this.searchLanguage,
       searchType: this.searchType,
       searchText: this.searchText,
       isLoading: this.isLoading,
       searchHistory: this.searchHistory,
+      localCards: this.localCards
     );
   }
 }

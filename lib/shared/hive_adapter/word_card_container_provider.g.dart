@@ -1,27 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-import 'package:app/shared/entity/search_queries.dart';
+import 'package:app/shared/entity/word_card.dart';
+import 'word_card_container.dart';
 import 'package:hive/hive.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SearchQueriesAdapter extends TypeAdapter<SearchQueries> {
+class WordCardContainerAdapter extends TypeAdapter<WordCardContainer> {
   @override
-  SearchQueries read(BinaryReader reader) {
+  WordCardContainer read(BinaryReader reader) {
     var numOfFields = reader.readByte();
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return SearchQueries()..value = (fields[0] as List)?.cast<String>();
+    var container = WordCardContainer()
+        ..cards = (fields[0] as List)?.cast<WordCard>();
+    return container;
   }
 
   @override
-  void write(BinaryWriter writer, SearchQueries obj) {
+  void write(BinaryWriter writer, WordCardContainer obj) {
     writer
       ..writeByte(1)
       ..writeByte(0)
-      ..write(obj.value);
+      ..write(obj.cards);
   }
 }

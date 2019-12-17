@@ -26,8 +26,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   bool get isInited => searchHistoryRepository.isInited;
 
   Future init()async{
+    await wordCardSearchRepository.init();
     await searchHistoryRepository.init();
-    add(HistoryRepositoryInited());
+    add(SearchBlocInited());
   }
   
   Stream<SearchState> get _debounceStates{
@@ -71,8 +72,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    if (event is HistoryRepositoryInited){
-      yield state.copyWith(searchHistory: searchHistoryRepository.get());
+    if (event is SearchBlocInited){
+      yield state.copyWith(searchHistory: searchHistoryRepository.get(),
+                           localCards: await wordCardSearchRepository.find("", SearchType.Local));
     } else if (event is SearchTextEdited){
       if (state.searchType == SearchType.Local || event.isLastCharacter){
         yield* _mapTextEdited(event.text);
@@ -93,6 +95,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       yield* _mapSearchRequestDone(event);
     } else if (event is UserExploredSearchResult){
       yield* _mapUserExplored(event.query);
+    } else if (event is ReturnedFromDetailView){
+      yield* _mapReturnedFromView(event);
+    }
+  }
+
+  Stream<SearchState> _mapReturnedFromView(SearchEvent query)async*{
+    if (state.searchType == SearchType.Local){
+      _createRequest(state.searchText, state.searchType);
     }
   }
 
@@ -106,7 +116,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   Stream<SearchState> _mapLanguageChanged(SearchLanguageChanged event) async* {
     var lang = state.searchLanguage == Language.Russian ? Language.Tatar : Language.Russian;
     yield state.copyWith(searchLangage: lang);
-    if (state.searchText.isNotEmpty){
+    if (state.searchText.isNotEmpty && state.searchType == SearchType.Global){
       _createRequest(state.searchText, state.searchType);
     }
   }
@@ -114,11 +124,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   Stream<SearchState> _mapSearchTypeChanged(SearchTypeChanged event) async* {
     yield state.copyWith(searchType: event.searchType);
     _cancelRequestIfActive();
-    if (state.searchText != null && state.searchText.isNotEmpty){
-      if ((event.searchType == SearchType.Global && state.globalCards == null) ||
-          (event.searchType == SearchType.Local && state.localCards == null)){
-         _createRequest(state.searchText, event.searchType);
-      }
+    if (event.searchType == SearchType.Local || (event.searchType == SearchType.Global &&
+        state.searchText.isNotEmpty && state.globalCards == null)){
+      _createRequest(state.searchText, event.searchType);
     }
   }
 
@@ -148,14 +156,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       return;
     }
 
-    yield state.noCards().copyWith(searchText: text);
+    yield state.noGlobalCards().copyWith(searchText: text);
 
     if (text.isEmpty && state.isLoading){
       _cancelRequestIfActive();
       return;
     }
 
-    if (text.isNotEmpty){
+    if (text.isNotEmpty || state.searchType == SearchType.Local){
       _createRequest(text, state.searchType);
     }
   }

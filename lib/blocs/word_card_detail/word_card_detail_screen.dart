@@ -1,4 +1,5 @@
 import 'package:app/shared/entity/word_card.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'word_card_detail_builder.dart';
 import 'word_card_detail_bloc.dart';
@@ -77,6 +78,17 @@ class WordCardDetailScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(wordCard.word),
+          actions: <Widget>[
+            BlocBuilder<WordCardDetailBloc, WordCardDetailState>(
+              bloc: wordCardDetailBloc,
+              builder: (context, state){
+                return IconButton(
+                  icon: Icon(state.wordAdded ? Icons.done : Icons.add),
+                  onPressed: () => wordCardDetailBloc.add(WordAddedStateChanged()),
+                );
+              },
+            )
+          ],
         ),
         body: ListView(
           children: <Widget>[

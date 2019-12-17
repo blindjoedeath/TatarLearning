@@ -38,8 +38,8 @@ class _AppBuilderState extends State<AppBuilder>{
     );
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<WelcomedRepository>(builder: (context) => welcomedRepository,),
-        RepositoryProvider<AppStateRepository>(builder: (context) => appScreen),
+        RepositoryProvider<WelcomedRepository>.value(value: welcomedRepository,),
+        RepositoryProvider<AppStateRepository>.value(value: appScreen),
       ],
       child: BlocProvider<AppBloc>.value(
         value: bloc,

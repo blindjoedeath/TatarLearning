@@ -40,8 +40,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   TabController _tabController;
   ValueNotifier _isEditing = ValueNotifier(false);
   ValueNotifier _isHasFocus = ValueNotifier(false);
-  SearchAppBarSliver _appBar;
-  SearchTabBarSliver _tabBar;
 
   void _disposeNode(FocusNode node){
     node?.unfocus();
@@ -53,8 +51,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void dispose() {
     _disposeNode(_tatarFocusNode);
     _disposeNode(_rusFocusNode);
-
-    _scrollController?.dispose();
 
     _textEditingController?.removeListener(_textListener);
     _textEditingController?.dispose();
@@ -69,8 +65,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     
     _tatarFocusNode = FocusNode();
     _rusFocusNode = FocusNode();
-
-    _scrollController = ScrollController();
 
     _tabController = TabController(
       initialIndex: widget.searchBloc.state.searchType == SearchType.Global ? 0 : 1,
@@ -111,7 +105,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void _updateSearchHistory(){
     if (!widget.searchBloc.state.isEmpty){
       var query = _textEditingController.text.trim();
-      if (query != previousQuery){
+      if (query != previousQuery && query.isNotEmpty){
         previousQuery = query;
         widget.searchBloc.add(UserExploredSearchResult(
           query: query
@@ -136,7 +130,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   bool get _isSearchPressed{
     var hasFocus = _tatarFocusNode.hasFocus || _rusFocusNode.hasFocus;
     var selection = _textEditingController.value.selection;
-    return !hasFocus && selection.baseOffset == -1 && selection.extentOffset == -1;
+    return !hasFocus && selection.baseOffset == -1 && selection.extentOffset == -1
+            && _textEditingController.text.isNotEmpty;
   }
 
   void _textListener(){
@@ -169,6 +164,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    _scrollController = PrimaryScrollController.of(context);
     return NotificationListener(
       child: TatarKeyboard(
         child: CustomScrollView( 
@@ -177,33 +173,16 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             BlocBuilder<SearchBloc, SearchState>(
               bloc: widget.searchBloc,
               builder: (context, state){
-                _appBar = SearchAppBarSliver(
+                return SearchAppBarSliver(
                   focusNode: _getNode(state.searchLanguage),
                   searchBloc: widget.searchBloc,
                   textEditingController: _textEditingController,
                 );
-                return _appBar;
               },
             ),
-            ValueListenableBuilder(
-              valueListenable: _isHasFocus,
-              builder: (context, value, child){
-                return BlocBuilder<SearchBloc, SearchState>(
-                  bloc: widget.searchBloc,
-                  builder: (context, state){
-                    if (value || !state.isEmpty) {
-                      _tabBar = SearchTabBarSliver(
-                        searchBloc: widget.searchBloc,
-                        tabController: _tabController,
-                      );
-                      return _tabBar;
-                    }
-                    return SliverToBoxAdapter(
-                      child: Container()
-                    );
-                  },
-                );
-              },
+            SearchTabBarSliver(
+              searchBloc: widget.searchBloc,
+              tabController: _tabController,
             ),
             ValueListenableBuilder(
               valueListenable: _isEditing,
@@ -217,6 +196,18 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     _unfocus();
                     _textEditingController.text = query;
                   },
+                );
+              }
+            ),
+             SliverLayoutBuilder(
+              builder: (context, constraints){
+                var height = constraints.viewportMainAxisExtent -
+                      constraints.precedingScrollExtent + 1;
+                height = height > 0 ? height : 0;
+                return SliverToBoxAdapter(
+                  child: Container(
+                    height: height,
+                  )
                 );
               }
             )
@@ -344,8 +335,14 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
   }
 
   Widget _buildListView({List<WordCard> cards}){
-    if (cards == null){
-      return Container();
+    if (cards == null || cards.isEmpty){
+      return SliverFillRemaining(
+        child: Center(
+          child: Text("Ничего не найдено.",
+            style: Theme.of(context).textTheme.display1
+          )
+        )
+      );
     }
     return ListTileTheme(
       selectedColor: Colors.black45,
@@ -372,8 +369,8 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
                   ),
                 )
               ),
-              onTap: (){
-                Navigator.push(context,
+              onTap: ()async{
+                await Navigator.push(context,
                   PageRouteBuilder(
                     pageBuilder: (c, a1, a2) => WordCardDetailBuilder(
                        wordCard: card,
@@ -388,6 +385,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
                     transitionDuration: Duration(milliseconds: 350),
                   )
                 );
+                widget.searchBloc.add(ReturnedFromDetailView());
               },
             );
           },
@@ -399,7 +397,6 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   @override
   Widget build(BuildContext context) {
-    
     return BlocBuilder<SearchBloc, SearchState>(
       bloc: widget.searchBloc,
       builder: (context, state){

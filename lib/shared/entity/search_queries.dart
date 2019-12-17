@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 const int _kCapacity = 3;
 
 @HiveType()
 class SearchQueries{
+
   @HiveField(0)
   List<String> value = List<String>();
 

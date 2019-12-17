@@ -1,11 +1,21 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-abstract class WordCardDetailState extends Equatable {
-  const WordCardDetailState();
+class WordCardDetailState extends Equatable {
+
+  final bool wordAdded;
+  const WordCardDetailState({@required this.wordAdded});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [wordAdded];
+
+
+  WordCardDetailState copyWith({bool wordAdded}){
+    return WordCardDetailState(
+      wordAdded: wordAdded ?? this.wordAdded
+    );
+  }
 
 }
-			
+
+

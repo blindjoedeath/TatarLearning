@@ -8,4 +8,7 @@ abstract class WordCardDetailEvent extends Equatable {
   List<Object> get props => [];
 
 }
+
+class WordAddedStateChanged extends WordCardDetailEvent{
+}
 			

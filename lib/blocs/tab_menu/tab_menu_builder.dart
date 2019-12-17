@@ -14,13 +14,16 @@ class TabMenuBuilder extends StatefulWidget {
 
 class _TabMenuBuilderState extends State<TabMenuBuilder>{
 
-
+  
+  WordCardSearchRepository _wordCardSearchRepository;
   SearchBloc _searchBloc;
   TabMenuBloc _bloc;
+  
   @override
   void initState() {
+    _wordCardSearchRepository = WordCardSearchRepository();
     _searchBloc = SearchBloc(
-      wordCardSearchRepository: WordCardSearchRepository(),
+      wordCardSearchRepository: _wordCardSearchRepository,
       searchHistoryRepository: SearchHistoryRepository(),
     );
 
@@ -41,14 +44,19 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider<TabMenuBloc>.value(value: _bloc,),
-        BlocProvider<SearchBloc>.value(value: _searchBloc,),
+        RepositoryProvider<WordCardSearchRepository>.value(value: _wordCardSearchRepository,)
       ],
-      child: TabMenuScreen(
-        menuBloc: _bloc,
-      ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<TabMenuBloc>.value(value: _bloc,),
+          BlocProvider<SearchBloc>.value(value: _searchBloc,),
+        ],
+        child: TabMenuScreen(
+          menuBloc: _bloc,
+        ),
+      )
     );
   }
 }

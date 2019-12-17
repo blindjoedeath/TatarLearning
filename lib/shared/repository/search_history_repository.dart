@@ -10,7 +10,7 @@ class SearchHistoryRepository{
   bool get isInited => Hive.isBoxOpen(kQueriesKey);
 
   Future init()async{
-    await Hive.openBox<SearchQueries>(kQueriesKey);
+    return await Hive.openBox<SearchQueries>(kQueriesKey);
   }
 
   SearchQueries get(){
