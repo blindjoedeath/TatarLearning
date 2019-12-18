@@ -15,31 +15,32 @@ class WhatIsGameScreen extends StatelessWidget {
   const WhatIsGameScreen({@required this.whatIsGameBloc});
 
 
-  Widget _buildBody(WhatIsGameState state){
-    if (state is ShowIntro){
-      return WhatIsGameIntro(
-        whatIsGameBloc: whatIsGameBloc,
-      );
-    }
-    return Column(
-      children: <Widget>[
-        Center(
-          child: Text("text")
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
         builder: (context, state){
-          if (state is! ShowIntro){
+          if (state is ShowIntro){
+            return WhatIsGameIntro(
+              whatIsGameBloc: whatIsGameBloc,
+            );
+          } else {
             return Scaffold(
               appBar: AppBar(),
+              body: Column(
+                children: <Widget>[
+                  Center(
+                    child: RaisedButton(
+                      color: Colors.blue,
+                      child: Text("Начать"),
+                      onPressed: (){
+                        print("tap");
+                      },
+                    ),
+                  )
+                ],
+              )
             );
           }
-          return _buildBody(state);
         }
     );
   }

@@ -53,6 +53,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
     _textEditingController?.removeListener(_textListener);
     _textEditingController?.dispose();
+
+    _tabController.dispose();
+
     super.dispose();
   }
 
@@ -396,6 +399,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   @override
   Widget build(BuildContext context) {
+    
     return BlocBuilder<SearchBloc, SearchState>(
       bloc: widget.searchBloc,
       builder: (context, state){

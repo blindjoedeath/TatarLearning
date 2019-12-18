@@ -1,5 +1,6 @@
 import 'package:app/blocs/welcome/welcome_bloc.dart';
 import 'package:app/blocs/welcome/welcome_event.dart';
+import 'package:app/shared/widget/bounce_button.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'delayed_animation.dart';
@@ -109,7 +110,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                     onTapUp: _onTapUp,
                     child: Transform.scale(
                       scale: _scale,
-                      child: _animatedButtonUI,
+                      child: BounceButton(
+                        text: 'Исәнме'
+                      )
                     ),
                   ),
                   delay: delayedAmount + 4000,
@@ -121,25 +124,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       )
     );
   }
-
-  Widget get _animatedButtonUI => Container(
-        height: 60,
-        width: 270,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100.0),
-          color: Colors.white,
-        ),
-        child: Center(
-          child: Text(
-            'Исәнме',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF8185E2),
-            ),
-          ),
-        ),
-      );
 
   void _onTapDown(TapDownDetails details) {
     _controller.forward();
