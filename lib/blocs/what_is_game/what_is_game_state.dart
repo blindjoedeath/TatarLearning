@@ -8,4 +8,7 @@ abstract class WhatIsGameState extends Equatable {
   List<Object> get props => [];
 
 }
-			
+
+class ShowIntro extends WhatIsGameState{}
+
+class ShowGame extends WhatIsGameState{}

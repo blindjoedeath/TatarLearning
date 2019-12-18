@@ -28,57 +28,61 @@ class HomeScreen extends StatelessWidget {
           childAspectRatio: 3/4
         ),
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(20),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Stack(
-                children: [
-                  Container(
-                    color: Colors.green,
-                    child: GridTile(
-                      footer: GridTileBar(
-                        title: Text("Что это?", 
-                          style: Theme.of(context).textTheme.title.copyWith(
-                            color: Colors.white70
-                          ),),
-                        subtitle: Text("Нәрсә бу?", 
-                          style: Theme.of(context).textTheme.subtitle.copyWith(
-                            color: Colors.white60
-                          ),),
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.only(bottom: 20),
-                        alignment: Alignment.center,
-                        child: Icon(MdiIcons.crosshairsQuestion,
-                          color: Colors.white70,
-                          size: 80,
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Material(
+              elevation: 4,
+              color: Colors.transparent,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  children: [
+                    Container(
+                      color: Colors.green,
+                      child: GridTile(
+                        footer: GridTileBar(
+                          title: Text("Что это?", 
+                            style: Theme.of(context).textTheme.title.copyWith(
+                              color: Colors.white70
+                            ),),
+                          subtitle: Text("Нәрсә бу?", 
+                            style: Theme.of(context).textTheme.subtitle.copyWith(
+                              color: Colors.white60
+                            ),),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.only(bottom: 20),
+                          alignment: Alignment.center,
+                          child: Icon(MdiIcons.crosshairsQuestion,
+                            color: Colors.white70,
+                            size: 80,
+                          )
                         )
                       )
-                    )
-                  ),
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                         Navigator.push(context,
-                          PageRouteBuilder(
-                            pageBuilder: (c, a1, a2) => WhatIsGameBuilder(
-                            ),
-                            transitionsBuilder: (c, anim, a2, child) => FadeTransition(
-                              opacity: CurvedAnimation(
-                                curve: Curves.fastOutSlowIn,
-                                parent: anim,
+                    ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(context,
+                            PageRouteBuilder(
+                              pageBuilder: (c, a1, a2) => WhatIsGameBuilder(
                               ),
-                              child: child)
-                              ,
-                            transitionDuration: Duration(milliseconds: 350),
-                          )
-                        );
-                      },
+                              transitionsBuilder: (c, anim, a2, child) => FadeTransition(
+                                opacity: CurvedAnimation(
+                                  curve: Curves.fastOutSlowIn,
+                                  parent: anim,
+                                ),
+                                child: child)
+                                ,
+                              transitionDuration: Duration(milliseconds: 350),
+                            )
+                          );
+                        },
+                      )
                     )
-                  )
-                ]
+                  ]
+                )
               )
             )
           )

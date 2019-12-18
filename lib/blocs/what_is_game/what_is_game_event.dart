@@ -9,3 +9,4 @@ abstract class WhatIsGameEvent extends Equatable {
 
 }
 			
+class IntroIsOver extends WhatIsGameEvent{}

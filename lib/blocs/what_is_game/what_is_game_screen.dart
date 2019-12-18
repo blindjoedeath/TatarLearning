@@ -1,3 +1,5 @@
+import 'package:app/blocs/what_is_game/what_is_game_intro.dart';
+
 import 'what_is_game_builder.dart';
 import 'what_is_game_bloc.dart';
 import 'package:flutter/material.dart';
@@ -12,21 +14,33 @@ class WhatIsGameScreen extends StatelessWidget {
 
   const WhatIsGameScreen({@required this.whatIsGameBloc});
 
+
+  Widget _buildBody(WhatIsGameState state){
+    if (state is ShowIntro){
+      return WhatIsGameIntro(
+        whatIsGameBloc: whatIsGameBloc,
+      );
+    }
+    return Column(
+      children: <Widget>[
+        Center(
+          child: Text("text")
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          Hero(
-            tag: "homeHero",
-            child: Center(
-              child: Text("text")
-            )
-          )
-        ],
-      )
-    );  
+    return 
+    BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
+        builder: (context, state){
+          return Scaffold(
+            appBar: (state is! ShowIntro) ? AppBar() : null,
+            body: _buildBody(state)
+          );
+        }
+    );
   }
 
 }

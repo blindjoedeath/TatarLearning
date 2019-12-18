@@ -34,6 +34,7 @@ dependencies:
   path_provider: ^1.3.0
   hive_generator: ^0.5.2
   build_runner: 
+  intro_views_flutter: '^2.8.0'
 
 dev_dependencies:
   flutter_test:
