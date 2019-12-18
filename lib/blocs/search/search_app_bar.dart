@@ -1,7 +1,6 @@
 import 'package:app/shared/entity/language.dart';
 import 'package:app/tatar_keyboard/tatar_key_row.dart';
 import 'package:flutter/services.dart';
-import 'package:statusbar/statusbar.dart';
 
 import 'search_bloc.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +109,6 @@ class SearchAppBarPersistentHeaderDelegate extends SliverPersistentHeaderDelegat
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    StatusBar.color(Theme.of(context).primaryColor);
     var shrinkRatio = shrinkOffset / _fromToHeight;
     shrinkRatio = shrinkRatio > 1 ? 1 : math.pow(shrinkRatio, 0.5);
     return Material(

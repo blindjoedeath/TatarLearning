@@ -32,13 +32,14 @@ class WhatIsGameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
+    return BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
         builder: (context, state){
-          return Scaffold(
-            appBar: (state is! ShowIntro) ? AppBar() : null,
-            body: _buildBody(state)
-          );
+          if (state is! ShowIntro){
+            return Scaffold(
+              appBar: AppBar(),
+            );
+          }
+          return _buildBody(state);
         }
     );
   }

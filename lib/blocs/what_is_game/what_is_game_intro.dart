@@ -70,6 +70,7 @@ class WhatIsGameIntro extends StatelessWidget {
   Widget build(BuildContext context) {
     return IntroViewsFlutter(
       [first, second, third],
+      onTapNextButton: (){print("next");},
       onTapDoneButton: (){
         whatIsGameBloc.add(IntroIsOver());
       },

@@ -8,7 +8,6 @@ import 'package:app/tatar_keyboard/tatar_input.dart';
 import 'package:app/tatar_keyboard/tatar_keyboard_impl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:statusbar/statusbar.dart';
 
 import 'search_app_bar.dart';
 import 'search_tab_bar.dart';

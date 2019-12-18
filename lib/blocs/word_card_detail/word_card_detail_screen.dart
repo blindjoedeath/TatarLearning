@@ -74,28 +74,26 @@ class WordCardDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(wordCard.word),
-          actions: <Widget>[
-            BlocBuilder<WordCardDetailBloc, WordCardDetailState>(
-              bloc: wordCardDetailBloc,
-              builder: (context, state){
-                return IconButton(
-                  icon: Icon(state.wordAdded ? Icons.done : Icons.add),
-                  onPressed: () => wordCardDetailBloc.add(WordAddedStateChanged()),
-                );
-              },
-            )
-          ],
-        ),
-        body: ListView(
-          children: <Widget>[
-            _buildImage(context),
-            _buildContent(context)
-          ],
-        )
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(wordCard.word),
+        actions: <Widget>[
+          BlocBuilder<WordCardDetailBloc, WordCardDetailState>(
+            bloc: wordCardDetailBloc,
+            builder: (context, state){
+              return IconButton(
+                icon: Icon(state.wordAdded ? Icons.done : Icons.add),
+                onPressed: () => wordCardDetailBloc.add(WordAddedStateChanged()),
+              );
+            },
+          )
+        ],
+      ),
+      body: ListView(
+        children: <Widget>[
+          _buildImage(context),
+          _buildContent(context)
+        ],
       )
     );
   }
