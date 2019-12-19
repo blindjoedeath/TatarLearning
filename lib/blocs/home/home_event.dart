@@ -9,3 +9,8 @@ abstract class HomeEvent extends Equatable {
 
 }
 			
+class HomeBlocInited extends HomeEvent{}
+
+class WhatIsGamePressed extends HomeEvent{}
+
+class ReturnedFromGame extends HomeEvent{}

@@ -1,3 +1,7 @@
+import 'package:app/shared/repository/app_dependency_repository.dart';
+import 'package:app/shared/repository/intro_showed_repository.dart';
+import 'package:dioc/dioc.dart';
+
 import 'home_screen.dart';
 import 'home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +20,13 @@ class _HomeBuilderState extends State<HomeBuilder>{
 
   @override
   void initState() {
+    AppDependencyRepository
+      .repositoriesContainer.register<IntroShowedRepository>(
+        (c) => IntroShowedRepository(), defaultMode: InjectMode.singleton
+      );
+
     homeBloc = HomeBloc(
+      introShowedRepository: AppDependencyRepository.repositoriesContainer.get<IntroShowedRepository>()
     );
     super.initState();
   }
@@ -24,6 +34,8 @@ class _HomeBuilderState extends State<HomeBuilder>{
   @override
   void dispose() {
     super.dispose();
+    AppDependencyRepository.repositoriesContainer.get<IntroShowedRepository>().dispose();
+    AppDependencyRepository.repositoriesContainer.unregister<IntroShowedRepository>();
     homeBloc?.close();
   }
 

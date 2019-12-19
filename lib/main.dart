@@ -18,6 +18,8 @@ void main()async {
   Hive.registerAdapter(SearchQueriesAdapter(), 0);
   Hive.registerAdapter(WordCardAdapter(), 1);
   Hive.registerAdapter(WordCardContainerAdapter(), 2);
+
+
   runApp(AppBuilder(
   ));
 }

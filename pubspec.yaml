@@ -34,6 +34,8 @@ dependencies:
   hive_generator: ^0.5.2
   build_runner: 
   intro_views_flutter: '^2.8.0'
+  dioc: ^0.1.6
+
 
 dev_dependencies:
   flutter_test:

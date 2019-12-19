@@ -14,6 +14,10 @@ class WordCardSearchRepository{
     return await _dbPovider.init();
   }
 
+  void dispose(){
+    _dbPovider.dispose();
+  }
+
   Future<List<WordCard>> find (String text, SearchType searchType) {
     if(searchType == SearchType.Global){
       return _apiPovider.fetchCards(text);

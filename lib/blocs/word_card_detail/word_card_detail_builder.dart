@@ -1,4 +1,5 @@
 import 'package:app/shared/entity/word_card.dart';
+import 'package:app/shared/repository/app_dependency_repository.dart';
 import 'package:app/shared/repository/word_card_repository.dart';
 
 import 'word_card_detail_screen.dart';
@@ -24,8 +25,9 @@ class _WordCardDetailBuilderState extends State<WordCardDetailBuilder>{
 
   @override
   void initState() {
+    var repository = AppDependencyRepository.repositoriesContainer.get<WordCardSearchRepository>();
     wordCardDetailBloc = WordCardDetailBloc(
-      wordCardSearchRepository: WordCardSearchRepository(),
+      wordCardSearchRepository: repository,
       wordCard: widget.wordCard
     );
     super.initState();

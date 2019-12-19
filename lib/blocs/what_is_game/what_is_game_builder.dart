@@ -1,3 +1,7 @@
+import 'package:app/blocs/home/home_bloc.dart';
+import 'package:app/shared/repository/app_dependency_repository.dart';
+import 'package:app/shared/repository/intro_showed_repository.dart';
+
 import 'what_is_game_screen.dart';
 import 'what_is_game_bloc.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +21,7 @@ class _WhatIsGameBuilderState extends State<WhatIsGameBuilder>{
   @override
   void initState() {
     whatIsGameBloc = WhatIsGameBloc(
+      introShowedRepository: AppDependencyRepository.repositoriesContainer.get<IntroShowedRepository>(),
     );
     super.initState();
   }
