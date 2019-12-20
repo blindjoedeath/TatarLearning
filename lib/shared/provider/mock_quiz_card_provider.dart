@@ -4,7 +4,7 @@ import 'package:app/shared/entity/quiz_card.dart';
 class MockQuizCardProvider {
 
   Future<List<QuizCard>> fetchCards() {
-   return Future<List<QuizCard>>.delayed(Duration(milliseconds: 3000), (){
+   return Future<List<QuizCard>>.delayed(Duration(milliseconds: 1500), (){
       return List<QuizCard>.generate(10, (index){
         return QuizCard(
           answerIndex: 0,

@@ -1,4 +1,5 @@
 import 'package:app/blocs/what_is_game/what_is_game_intro.dart';
+import 'package:app/shared/entity/quiz_card.dart';
 import 'package:app/shared/widget/bounce_button.dart';
 
 import 'what_is_game_builder.dart';
@@ -58,6 +59,36 @@ class _WhatIsGameState extends State<WhatIsGame>{
     );
   }
 
+  List<Widget> _buildQuizCard(QuizCard card){
+    return [
+      Padding(
+        padding: EdgeInsets.only(right: 24, left: 24, ),
+        child: Card(
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(right: 20, left: 20, top: 46),
+                alignment: Alignment.center,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    card.imageUrl,
+                    fit: BoxFit.fitHeight,
+                    width: 240,
+                  ),
+                )
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 12),
+                child: Container()
+              )
+            ],
+          )
+        )
+      )
+    ];
+  }
+
   List<Widget> _buildAreYouReady(){
     return [
       Center(
@@ -78,8 +109,8 @@ class _WhatIsGameState extends State<WhatIsGame>{
             color: Colors.white70,
             child: Text(
               "Готов", 
-              style: TextStyle(
-                fontSize: 20.0,
+              style: Theme.of(context).textTheme.headline.copyWith(
+                fontSize: 20,
                 color: Colors.teal
               ),
             ),
@@ -106,16 +137,18 @@ class _WhatIsGameState extends State<WhatIsGame>{
         child: BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
           bloc: BlocProvider.of<WhatIsGameBloc>(context),
           builder: (context, state){
-            var widgets;
-            if (state is GameLoading){
-              widgets = [_buildIndicator()]; 
-            } else if (state is GameLoaded){
-              widgets = _buildAreYouReady();
-            }
-            return Stack(
+            return ListView(
               children: <Widget>[
-                _buildCloseButton()
-              ] + widgets,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [_buildCloseButton()]
+                ),
+                Stack(
+                  children: <Widget>[
+
+                  ] + _buildAreYouReady(),
+                )
+              ] ,
             );
           },
         )
