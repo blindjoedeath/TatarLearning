@@ -5,5 +5,3 @@ abstract class WelcomeEvent extends Equatable {
   const WelcomeEvent();
   @override get props => [];
 }
-
-class UserInteracted extends WelcomeEvent{}

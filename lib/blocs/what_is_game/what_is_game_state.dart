@@ -1,3 +1,4 @@
+import 'package:app/shared/entity/quiz_card.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -11,4 +12,13 @@ abstract class WhatIsGameState extends Equatable {
 
 class ShowIntro extends WhatIsGameState{}
 
-class ShowGame extends WhatIsGameState{}
+class GameLoading extends WhatIsGameState{}
+
+class GameLoaded extends WhatIsGameState{
+  final List<QuizCard> cards;
+
+  const GameLoaded({@required this.cards});
+
+  @override
+  List<Object> get props => [cards];
+}

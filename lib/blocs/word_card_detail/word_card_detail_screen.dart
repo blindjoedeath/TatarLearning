@@ -83,7 +83,15 @@ class WordCardDetailScreen extends StatelessWidget {
             builder: (context, state){
               return IconButton(
                 icon: Icon(state.wordAdded ? Icons.done : Icons.add),
-                onPressed: () => wordCardDetailBloc.add(WordAddedStateChanged()),
+                onPressed: (){
+                  wordCardDetailBloc.add(WordAddedStateChanged());
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(seconds: 1),
+                      content: Text("Слово " + (state.wordAdded ? "удалено" : "сохранено") + "."),
+                    )
+                  );
+                },
               );
             },
           )

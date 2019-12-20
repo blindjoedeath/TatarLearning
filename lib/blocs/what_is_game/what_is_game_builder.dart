@@ -1,6 +1,7 @@
 import 'package:app/blocs/home/home_bloc.dart';
 import 'package:app/shared/repository/app_dependency_repository.dart';
 import 'package:app/shared/repository/intro_showed_repository.dart';
+import 'package:app/shared/repository/quiz_cards_repository.dart';
 
 import 'what_is_game_screen.dart';
 import 'what_is_game_bloc.dart';
@@ -20,8 +21,11 @@ class _WhatIsGameBuilderState extends State<WhatIsGameBuilder>{
 
   @override
   void initState() {
+    AppDependencyRepository.
+        repositoriesContainer.register<QuizCardsRepository>((c) => QuizCardsRepository());
     whatIsGameBloc = WhatIsGameBloc(
       introShowedRepository: AppDependencyRepository.repositoriesContainer.get<IntroShowedRepository>(),
+      quizCardsRepository: AppDependencyRepository.repositoriesContainer.get<QuizCardsRepository>()
     );
     super.initState();
   }

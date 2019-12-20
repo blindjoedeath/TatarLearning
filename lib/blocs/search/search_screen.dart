@@ -195,8 +195,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                   isEditing: value,
                   onCoverTap: _unfocus,
                   onPreviousQuery: (query){
-                    _unfocus();
                     _textEditingController.text = query;
+                    _unfocus();
                   },
                 );
               }

@@ -18,6 +18,13 @@ class TabMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Hero(
+      tag: "welcomeHero",
+      child: Scaffold(
+        appBar: AppBar(),
+      )
+    );
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<TabMenuBloc, TabMenuState>(

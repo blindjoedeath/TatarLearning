@@ -7,12 +7,12 @@ class MockWordCardApiProvider {
   Future<List<WordCard>> fetchCards(String text) {
     return Future<List<WordCard>>.delayed(Duration(seconds: 2), (){
       var random = Random();
-      return List<WordCard>.generate(20, (index){
+      return List<WordCard>.generate(50, (index){
         return WordCard(
           word: "$text $index",
           description: "Description $index",
           translates: ["Translate 1", "Translate 2"],
-          imageUrl: "https://picsum.photos/seed/${random.nextInt(50)}/${random.nextInt(100) + 100}/${random.nextInt(100) + 100}"
+          imageUrl: "https://picsum.photos/seed/${random.nextInt(50)}/400/300"
         );
       });
     });

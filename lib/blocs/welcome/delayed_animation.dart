@@ -16,6 +16,7 @@ class _DelayedAimationState extends State<DelayedAimation>
     with TickerProviderStateMixin {
   AnimationController _controller;
   Animation<Offset> _animOffset;
+  ValueNotifier<bool> _showChild = ValueNotifier(false);
 
   @override
   void initState() {
@@ -34,13 +35,21 @@ class _DelayedAimationState extends State<DelayedAimation>
     } else {
       Timer(Duration(milliseconds: widget.delay), () {
         _controller.forward();
+        _controller.addListener(_controllerListener);
       });
     }
+  }
+
+  void _controllerListener(){
+    var value = _controller.status == AnimationStatus.completed ||
+      _controller.status == AnimationStatus.forward;
+    _showChild.value = value;
   }
 
   @override
   void dispose() {
     super.dispose();
+    _controller.removeListener(_controllerListener);
     _controller.dispose();
   }
 
@@ -49,7 +58,12 @@ class _DelayedAimationState extends State<DelayedAimation>
     return FadeTransition(
       child: SlideTransition(
         position: _animOffset,
-        child: widget.child,
+        child: ValueListenableBuilder(
+          valueListenable: _showChild,
+          builder: (context, value, child){
+            return value ? widget.child : Container();
+          },
+        ),
       ),
       opacity: _controller,
     );

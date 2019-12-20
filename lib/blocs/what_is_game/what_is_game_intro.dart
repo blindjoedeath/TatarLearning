@@ -77,9 +77,9 @@ class WhatIsGameIntro extends StatelessWidget {
       showSkipButton: false,
       doneText: const Text("ОК!"),
       pageButtonTextStyles: new TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-        ),
+        color: Colors.white,
+        fontSize: 20.0,
+      ),
     );
   }
 }

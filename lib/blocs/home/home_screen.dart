@@ -22,40 +22,43 @@ class HomeScreen extends StatelessWidget {
       child: Material(
         elevation: 4,
         color: Colors.transparent,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Stack(
-            children: [
-              Container(
-                color: Colors.green,
-                child: GridTile(
-                  footer: GridTileBar(
-                    title: Text("Что это?", 
-                      style: Theme.of(context).textTheme.title.copyWith(
-                        color: Colors.white70
-                      ),),
-                    subtitle: Text("Нәрсә бу?", 
-                      style: Theme.of(context).textTheme.subtitle.copyWith(
-                        color: Colors.white60
-                      ),),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.only(bottom: 20),
-                    alignment: Alignment.center,
-                    child: Icon(MdiIcons.crosshairsQuestion,
-                      color: Colors.white70,
-                      size: 80,
+        child: Hero(
+          tag: "whatIsHero",
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Stack(
+              children: [
+                Container(
+                  color: Colors.green,
+                  child: GridTile(
+                    footer: GridTileBar(
+                      title: Text("Что это?", 
+                        style: Theme.of(context).textTheme.title.copyWith(
+                          color: Colors.white70
+                        ),),
+                      subtitle: Text("Нәрсә бу?", 
+                        style: Theme.of(context).textTheme.subtitle.copyWith(
+                          color: Colors.white60
+                        ),),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      alignment: Alignment.center,
+                      child: Icon(MdiIcons.crosshairsQuestion,
+                        color: Colors.white70,
+                        size: 80,
+                      )
                     )
                   )
+                ),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => homeBloc.add(WhatIsGamePressed())
+                  )
                 )
-              ),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => homeBloc.add(WhatIsGamePressed())
-                )
-              )
-            ]
+              ]
+            )
           )
         )
       )

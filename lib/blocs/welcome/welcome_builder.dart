@@ -17,7 +17,6 @@ class _WelcomeBuilderState extends State<WelcomeBuilder>{
   @override
   void initState() {
     bloc = WelcomeBloc(
-      appBloc: BlocProvider.of<AppBloc>(context)
     );
     super.initState();
   }

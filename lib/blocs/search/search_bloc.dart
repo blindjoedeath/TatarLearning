@@ -39,7 +39,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
         var time = event.text.isNotEmpty ? 250 : 0;
         return TimerStream(true, Duration(milliseconds: time));
       })
-      .distinct()
       .switchMap((e){
         var event = SearchTextEditingDebounced(text: e.text);
         return mapEventToState(event);
@@ -152,6 +151,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   }
 
   Stream<SearchState> _mapTextEdited(String text) async* {
+
     if (state.searchText == text && !state.isLoading){
       return;
     }

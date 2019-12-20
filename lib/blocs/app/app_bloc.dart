@@ -16,6 +16,12 @@ class AppBloc extends Bloc<AppEvent, AppState>{
   AppState get initialState => welcomedRepository.isWelcomed ? LoadApp() : WelcomeUser();
 
   @override
+  void close() {
+    print("close app");
+    super.close();
+  }
+
+  @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
     if (event is WelcomedUser){
       welcomedRepository.isWelcomed = true;
