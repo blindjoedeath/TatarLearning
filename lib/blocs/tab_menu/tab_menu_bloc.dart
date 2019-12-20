@@ -10,10 +10,18 @@ import 'package:bloc/bloc.dart';
 class TabMenuBloc extends Bloc<TabMenuEvent, TabMenuState>{
 
   final SearchBloc searchBloc;
+  Future<void> heroTransition;
 
-  TabMenuBloc({@required this.searchBloc});
+  TabMenuBloc({@required this.searchBloc, this.heroTransition}){
+    if (heroTransition != null){
+      heroTransition.whenComplete((){
+        add(HomeTabPressed());
+      });
+    }
+  }
 
-  TabMenuState get initialState => HomeTab();
+  TabMenuState get initialState => 
+    heroTransition == null ? HomeTab() : WaitHeroTransition();
   @override
   Stream<TabMenuState> mapEventToState(TabMenuEvent event) async* {
     if(!searchBloc.isInited){

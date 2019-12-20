@@ -13,4 +13,6 @@ class HomeBlocInited extends HomeEvent{}
 
 class WhatIsGamePressed extends HomeEvent{}
 
-class ReturnedFromGame extends HomeEvent{}
+class Showed extends HomeEvent{}
+
+class HeroTransitionDone extends HomeEvent{}

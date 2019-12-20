@@ -10,6 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabMenuBuilder extends StatefulWidget {
+
+  final Future<void> heroTransition;
+
+  const TabMenuBuilder({this.heroTransition});
+
   @override
   State<StatefulWidget> createState() => _TabMenuBuilderState();
 }
@@ -34,8 +39,12 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
     );
 
     _bloc = TabMenuBloc(
-      searchBloc: _searchBloc
+      searchBloc: _searchBloc,
+      heroTransition: widget.heroTransition
     );
+
+    AppDependencyRepository.blocsContainer
+      .register<TabMenuBloc>((c) => _bloc);    
 
     super.initState();
   }
@@ -46,6 +55,7 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
     super.dispose();
     AppDependencyRepository.repositoriesContainer.get<WordCardSearchRepository>().dispose();
     AppDependencyRepository.repositoriesContainer.unregister<WordCardSearchRepository>();
+    AppDependencyRepository.blocsContainer.unregister<TabMenuBloc>();   
     _searchHistoryRepository.dispose();
     _bloc?.close();
     _searchBloc?.close();

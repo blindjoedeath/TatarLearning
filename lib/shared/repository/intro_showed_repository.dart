@@ -12,7 +12,9 @@ class IntroShowedRepository{
   }
 
   Future<void> init(){
-
+    return Future.microtask(((){
+      return;
+    }));
   }
 
   bool isShowed(Screen screen){

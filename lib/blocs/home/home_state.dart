@@ -11,7 +11,11 @@ abstract class HomeState extends Equatable {
 
 class HomeIsNotInited extends HomeState{}
 
-class HomeDefaultState extends HomeState{}
+class HomeDefaultState extends HomeState{
+  final bool withHeros;
+
+  const HomeDefaultState({this.withHeros = true});
+}
 
 class ShowWhatIsGame extends HomeState{}
 			

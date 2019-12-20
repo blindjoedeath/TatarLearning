@@ -6,6 +6,8 @@ abstract class TabMenuState extends Equatable{
   @override get props => [];
 }
 
+class WaitHeroTransition extends TabMenuState{}
+
 class HomeTab extends TabMenuState{}
 
 class SearchTab extends TabMenuState{}

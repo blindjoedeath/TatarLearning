@@ -16,30 +16,30 @@ class TabMenuScreen extends StatelessWidget {
 
   const TabMenuScreen({@required this.menuBloc});
 
-  @override
-  Widget build(BuildContext context) {
-    return Hero(
-      tag: "welcomeHero",
-      child: Scaffold(
-        appBar: AppBar(),
-      )
-    );
 
+  Widget _buildScaffold(BuildContext context, TabMenuState state){
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocBuilder<TabMenuBloc, TabMenuState>(
-        bloc: menuBloc,
-        builder: (context, state){
-          if (state is HomeTab){
-            return HomeBuilder();
-          } else if (state is SearchTab){
-            return SearchBuilder();
-          }  
-        },
-      ),
+      body: state is SearchTab ? SearchBuilder() : HomeBuilder(),
       bottomNavigationBar: MenuNavigationBar(
         menuBloc: menuBloc,
       )
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  BlocBuilder<TabMenuBloc, TabMenuState>(
+      bloc: menuBloc,
+      builder: (context, state){
+        if (state is WaitHeroTransition){
+          return Hero(
+            tag: "welcomeHero",
+            child: _buildScaffold(context, state)
+          );
+        }
+        return _buildScaffold(context, state);
+      }
     );
   }
 }

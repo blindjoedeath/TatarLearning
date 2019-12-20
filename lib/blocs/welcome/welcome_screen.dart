@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/blocs/tab_menu/tab_menu_builder.dart';
 import 'package:app/blocs/welcome/welcome_bloc.dart';
 import 'package:app/blocs/welcome/welcome_event.dart';
@@ -108,10 +110,14 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _transitionFuture(){
+
+  }
+
   void _navigate(BuildContext context)async{
+    TabMenuBuilder tabMenuBuilder;
     var route = PageRouteBuilder(
-      pageBuilder: (c, a1, a2) => TabMenuBuilder(
-      ),
+      pageBuilder: (c, a1, a2) => tabMenuBuilder,
       transitionsBuilder: (c, anim, a2, child) => FadeTransition(
         opacity: CurvedAnimation(
           curve: Curves.fastOutSlowIn,
@@ -121,6 +127,19 @@ class WelcomeScreen extends StatelessWidget {
         ,
       transitionDuration: Duration(milliseconds: 350),
     );
+
+    var futureController = StreamController();
+    tabMenuBuilder = TabMenuBuilder(
+      heroTransition: futureController.stream.listen((d){}).asFuture(),
+    );
+
     Navigator.pushReplacement(context, route);
+
+    route.controller.addListener((){
+      var status = route.controller.status;
+      if (status == AnimationStatus.completed){
+        futureController.close();
+      }
+    });
   }
 }

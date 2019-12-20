@@ -1,3 +1,4 @@
+import 'package:app/blocs/tab_menu/tab_menu_bloc.dart';
 import 'package:app/shared/repository/app_dependency_repository.dart';
 import 'package:app/shared/repository/intro_showed_repository.dart';
 import 'package:dioc/dioc.dart';
@@ -24,8 +25,8 @@ class _HomeBuilderState extends State<HomeBuilder>{
       .repositoriesContainer.register<IntroShowedRepository>(
         (c) => IntroShowedRepository(), defaultMode: InjectMode.singleton
       );
-
     homeBloc = HomeBloc(
+      tabMenuBloc: AppDependencyRepository.blocsContainer.get<TabMenuBloc>(),
       introShowedRepository: AppDependencyRepository.repositoriesContainer.get<IntroShowedRepository>()
     );
     super.initState();
