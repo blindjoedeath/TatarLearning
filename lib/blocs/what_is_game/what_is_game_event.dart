@@ -22,3 +22,9 @@ class QuizCardsLoaded extends WhatIsGameEvent{
 }
 
 class UserIsReady extends WhatIsGameEvent{}
+
+class UserAnswered extends WhatIsGameEvent{
+  final int answerIndex;
+
+  const UserAnswered({@required this.answerIndex});
+}
