@@ -36,9 +36,6 @@ class WhatIsGameBloc extends Bloc<WhatIsGameEvent, WhatIsGameState>{
     answers.add(game.cards[game.currentCard].answerIndex == event.answerIndex);
     var current = game.currentCard + 1;
 
-    print(answers.length);
-    print(game.cards.length);
-
     if (answers.length == game.cards.length){
       yield GameOver();
     } else {
@@ -53,7 +50,6 @@ class WhatIsGameBloc extends Bloc<WhatIsGameEvent, WhatIsGameState>{
     var game =  GameActive(
       cards: (state as WaitForBegin).cards,
     );
-    print(game.answers);
     yield game;
   }
 
