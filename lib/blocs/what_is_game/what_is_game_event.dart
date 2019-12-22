@@ -28,3 +28,5 @@ class UserAnswered extends WhatIsGameEvent{
 
   const UserAnswered({@required this.answerIndex});
 }
+
+class QuestionTimeout extends WhatIsGameEvent{}

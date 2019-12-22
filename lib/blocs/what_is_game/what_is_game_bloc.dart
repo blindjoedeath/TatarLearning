@@ -27,13 +27,15 @@ class WhatIsGameBloc extends Bloc<WhatIsGameEvent, WhatIsGameState>{
       yield* _mapUserReady(event);
     } else if (event is UserAnswered){
       yield* _mapUserAnswered(event);
+    } else if (event is QuestionTimeout){
+      yield* _mapQuestionTimeout(event);
     }
   }
 
-  Stream<WhatIsGameState> _mapUserAnswered(UserAnswered event)async*{
+  Stream<WhatIsGameState> _mapAnswer(bool value)async*{
     var game = state as GameActive;
     var answers = game.answers;
-    answers.add(game.cards[game.currentCard].answerIndex == event.answerIndex);
+    answers.add(value);
     var current = game.currentCard + 1;
 
     if (answers.length == game.cards.length){
@@ -44,6 +46,16 @@ class WhatIsGameBloc extends Bloc<WhatIsGameEvent, WhatIsGameState>{
         currentCard: current
       );
     }
+  }
+
+  Stream<WhatIsGameState> _mapQuestionTimeout(QuestionTimeout event)async*{
+    yield* _mapAnswer(false);
+  }
+
+  Stream<WhatIsGameState> _mapUserAnswered(UserAnswered event)async*{
+    var game = state as GameActive;
+    var value = game.cards[game.currentCard].answerIndex == event.answerIndex;
+    yield* _mapAnswer(value);
   }
 
   Stream<WhatIsGameState> _mapUserReady(UserIsReady event)async*{

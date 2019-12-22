@@ -8,7 +8,7 @@ class MockQuizCardProvider {
       return List<QuizCard>.generate(10, (index){
         return QuizCard(
           answerIndex: 0,
-          variants: ["variant $index", "variant 2", "variant 3", "variant 4"],
+          variants: ["Песи", "Эт", "Чәк чәк", "Чикләвек"],
           imageUrl: "http://sun9-14.userapi.com/c849424/v849424786/15eee3/Y4C7mfELwBA.jpg?ava=1"
         );
       });

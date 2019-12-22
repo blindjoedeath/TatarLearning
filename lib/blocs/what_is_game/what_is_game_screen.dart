@@ -31,7 +31,9 @@ class WhatIsGameScreen extends StatelessWidget {
         } else {
           return Hero(
             tag: "whatIsHero",
-            child: WhatIsGame()
+            child: WhatIsGame(
+              whatIsGameBloc: whatIsGameBloc,
+            )
           );
         }
       }
