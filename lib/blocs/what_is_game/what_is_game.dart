@@ -51,7 +51,7 @@ class _WhatIsGameState extends State<WhatIsGame> with SingleTickerProviderStateM
 
   Widget _buildChip(QuizCard card, int index){
     return Transform.scale(
-      scale: 1.15,
+      scale: 1.1,
       child: ActionChip(
         label: Text(card.variants[index], 
           style: Theme.of(context).textTheme.title.copyWith(
@@ -61,6 +61,7 @@ class _WhatIsGameState extends State<WhatIsGame> with SingleTickerProviderStateM
         elevation: 4,   
         pressElevation: 8,
         onPressed: (){
+          setState(() {});
           _animationController.forward().whenComplete((){
             _animationController.reset();
             var bloc = BlocProvider.of<WhatIsGameBloc>(context);
@@ -93,56 +94,68 @@ class _WhatIsGameState extends State<WhatIsGame> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildQuizCard(QuizCard card, {double elevation = 4.0}){
+  Widget _buildQuizCard(QuizCard card){
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      height: MediaQuery.of(context).size.height * 0.7,
-      child: Card(
-        elevation: elevation,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(right: 20, left: 20, top: 46),
-              alignment: Alignment.topCenter,
-              child: Material(
-                color: Colors.transparent,
-                elevation: 4,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    card.imageUrl,
-                    fit: BoxFit.fitHeight,
-                    height: 250,
-                  ),
-                )
-              )
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 24),
-                child: _buildVariants(card)
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.elliptical(35, 40),
+          topRight: Radius.elliptical(35, 40)
+        ),
+        color: Colors.white,
+        boxShadow: kElevationToShadow[4],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.white.withAlpha(220), Colors.white],
+          stops: [0.0, 0.4],
+        ),
+      ),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(right: 20, left: 20, top: 46),
+            alignment: Alignment.topCenter,
+            child: Material(
+              color: Colors.transparent,
+              elevation: 4,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  card.imageUrl,
+                  fit: BoxFit.fitHeight,
+                  height: 250,
+                ),
               )
             )
-          ],
-        )
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 24),
+              child: _buildVariants(card)
+            )
+          )
+        ],
       )
     );
   }
 
   Widget _buildQuizScreen(GameActive state){
-    var stackCount = 4;
+    var stackCount = 3;
     var cards = <Widget>[
       FlyAnimation(
         controller: _animationController,
-        child: _buildQuizCard(state.cards[state.currentCard], elevation: 0)
+        child: _buildQuizCard(state.cards[state.currentCard])
       )
     ];
     for(int i = 1; i < stackCount; ++i){
       if (state.currentCard + i < state.cards.length){
         cards.add(
-          Positioned(
-            bottom: -20.0 * (i-1),
+          AnimatedPositioned(
+            duration: Duration(milliseconds: _animationController.isAnimating ? 500 : 200),
+            bottom: _animationController.isAnimating ? 20.0 * (i-1) : 20.0 * i,
             child: _buildQuizCard(
               state.cards[state.currentCard + i],
             )
@@ -154,7 +167,7 @@ class _WhatIsGameState extends State<WhatIsGame> with SingleTickerProviderStateM
     }
 
     return Align(
-      alignment: Alignment.center,
+      alignment: Alignment.bottomCenter,
       child: Stack(
         overflow: Overflow.visible,
         children: cards.reversed.toList()

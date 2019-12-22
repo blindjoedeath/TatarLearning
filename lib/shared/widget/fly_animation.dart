@@ -36,7 +36,7 @@ class _FlyAnimationState extends State<FlyAnimation> with SingleTickerProviderSt
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0),
-      end: const Offset(-2, -0.1),
+      end: const Offset(-2, 0.1),
     ).animate(curve);
 
     _scaleAnimation = Tween(
