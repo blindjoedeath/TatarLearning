@@ -1,4 +1,5 @@
 import 'package:app/blocs/what_is_game/what_is_game_event.dart';
+import 'package:intro_views_flutter/Constants/constants.dart';
 import 'package:intro_views_flutter/Models/page_view_model.dart';
 import 'package:intro_views_flutter/intro_views_flutter.dart';
 
@@ -68,18 +69,26 @@ class WhatIsGameIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntroViewsFlutter(
-      [first, second, third],
-      onTapNextButton: (){print("next");},
-      onTapDoneButton: (){
-        whatIsGameBloc.add(IntroIsOver());
-      },
-      showSkipButton: false,
-      doneText: const Text("ОК!"),
-      pageButtonTextStyles: new TextStyle(
-        color: Colors.white,
-        fontSize: 20.0,
-      ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: IntroViewsFlutter(
+            [first, second, third],
+            onTapNextButton: (){print("next");},
+            onTapDoneButton: (){
+              whatIsGameBloc.add(IntroIsOver());
+            },
+            showSkipButton: false,
+            doneText: const Text("ОК!"),
+            pageButtonTextStyles: new TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            ),
+          )
+        )
+      )
     );
   }
 }

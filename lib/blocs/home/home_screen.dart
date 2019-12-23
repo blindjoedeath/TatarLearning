@@ -9,29 +9,126 @@ import 'home_state.dart';
 import 'home_event.dart';
 
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget{
 
   final HomeBloc homeBloc;
 
-  bool withHero = false; 
+  const HomeScreen({@required this.homeBloc});
 
-  HomeScreen({@required this.homeBloc});
+  @override
+  State<StatefulWidget> createState() => _HomeScreenState();
+
+}
 
 
-  Widget _buildGridTile(BuildContext context){
+class _HomeScreenState extends State<HomeScreen> {
+
+  String _pressedItemTag;
+  bool withHero = false;
+
+  void _show(Widget Function() builder)async{
+    WidgetsBinding.instance.addPostFrameCallback((d) async{
+      await Navigator.push(context,
+        PageRouteBuilder(
+          pageBuilder: (c, a1, a2) => Hero(
+            tag: _pressedItemTag,
+            child: WhatIsGameBuilder()
+          ),
+          transitionsBuilder: (c, anim, a2, child) => FadeTransition(
+            opacity: CurvedAnimation(
+              curve: Curves.fastOutSlowIn,
+              parent: anim,
+            ),
+            child: child
+          ),
+          transitionDuration: Duration(milliseconds: 350),
+        )
+      );
+    });
+  } 
+
+  void _itemPressed(String withTag, HomeEvent Function() builder){
+    _pressedItemTag = withTag;
+    widget.homeBloc.add(builder());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      bloc: widget.homeBloc,
+      builder: (context, state){
+        if (state is ShowWhatIsGame){
+          widget.homeBloc.add(Showed());
+          _show(() => WhatIsGameBuilder());
+        }
+        if (state is HomeDefaultState){
+          withHero = state.withHeros;
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Меню"),
+            backgroundColor: Colors.blue,
+          ),
+          body: GridView(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 3/4
+            ),
+            children: <Widget>[
+              HomeGridItem(
+                withHero: withHero,
+                itemIndex: 0,
+                color: Colors.green,
+                title: "Что это?",
+                subtitle: "Нәрсә бу?",
+                onTap: (tag) => _itemPressed(tag, () => WhatIsGamePressed()),
+              ),
+              HomeGridItem(
+                withHero: withHero,
+                itemIndex: 1,
+                color: Colors.purple,
+                title: "Что это?",
+                subtitle: "Нәрсә бу?",
+                onTap: (tag) => _itemPressed(tag, () => WhatIsGamePressed()),
+              ),
+            ],
+          )
+        );
+      }
+    );
+  }
+
+}
+			
+
+class HomeGridItem extends StatelessWidget{
+
+  final String title;
+  final String subtitle;
+  final Color color;
+  final bool withHero;
+  final int itemIndex;
+  final void Function(String) onTap;
+
+  const HomeGridItem({@required this.title, @required this.color, @required this.itemIndex,
+                      @required this.subtitle, @required this.onTap, @required this.withHero});
+
+  String get _heroTag => "whatIsGame $itemIndex";
+
+  Widget _buildItem(BuildContext context){
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Stack(
         children: [
           Container(
-            color: Colors.green,
+            color: color,
             child: GridTile(
               footer: GridTileBar(
-                title: Text("Что это?", 
+                title: Text(title, 
                   style: Theme.of(context).textTheme.title.copyWith(
                     color: Colors.white70
                   ),),
-                subtitle: Text("Нәрсә бу?", 
+                subtitle: Text(subtitle, 
                   style: Theme.of(context).textTheme.subtitle.copyWith(
                     color: Colors.white60
                   ),),
@@ -49,80 +146,28 @@ class HomeScreen extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () => homeBloc.add(WhatIsGamePressed())
+              onTap: () => onTap(_heroTag)
             )
           )
         ]
       )
     );
   }
+  
 
-
-  Widget _buildGridItem(BuildContext context, {bool withHero}){
+  @override
+  Widget build(BuildContext context) { 
     return Padding(
       padding: EdgeInsets.all(20),
       child: Material(
         elevation: 4,
         color: Colors.transparent,
         child: withHero ? Hero(
-            tag: "whatIsHero",
-            child: _buildGridTile(context)
-          ) : Container(
-            child: _buildGridTile(context)
-          )  
+          tag: _heroTag,
+          child: _buildItem(context)
+        ) : _buildItem(context)
       )
     );
   }
 
-  void _showWhatIsGame(BuildContext context)async{
-    await Navigator.push(context,
-      PageRouteBuilder(
-      pageBuilder: (c, a1, a2) => WhatIsGameBuilder(
-        ),
-        transitionsBuilder: (c, anim, a2, child) => FadeTransition(
-          opacity: CurvedAnimation(
-            curve: Curves.fastOutSlowIn,
-            parent: anim,
-          ),
-          child: child)
-          ,
-        transitionDuration: Duration(milliseconds: 350),
-      )
-    );
 }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      bloc: homeBloc,
-      builder: (context, state){
-        if (state is ShowWhatIsGame){
-          homeBloc.add(Showed());
-          WidgetsBinding.instance.addPostFrameCallback((d) => _showWhatIsGame(context));
-        }
-        if (state is HomeDefaultState){
-          withHero = state.withHeros;
-        }
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Меню"),
-            backgroundColor: Colors.blue,
-          ),
-          body: GridView(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3/4
-            ),
-            children: <Widget>[
-              _buildGridItem(context,
-                withHero: withHero
-              )
-            ],
-          )
-        );
-      }
-    );
-  }
-
-}
-			

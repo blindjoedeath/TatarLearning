@@ -22,18 +22,12 @@ class WhatIsGameScreen extends StatelessWidget {
     return BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
       builder: (context, state){
         if (state is ShowIntro){
-          return Hero(
-            tag: "whatIsHero",
-            child: WhatIsGameIntro(
-              whatIsGameBloc: whatIsGameBloc,
-            )
+          return WhatIsGameIntro(
+            whatIsGameBloc: whatIsGameBloc,
           );
         } else {
-          return Hero(
-            tag: "whatIsHero",
-            child: WhatIsGame(
-              whatIsGameBloc: whatIsGameBloc,
-            )
+          return WhatIsGame(
+            whatIsGameBloc: whatIsGameBloc,
           );
         }
       }
