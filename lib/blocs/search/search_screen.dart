@@ -82,18 +82,15 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void _updateValueNotifier(ValueNotifier notifier, bool value){
     if (value != notifier.value){
       // because custom scroll rebuilds itself when has focus
-      if (value){
-        notifier.value = value;
-      } else {
-        WidgetsBinding.instance
+       WidgetsBinding.instance
           .addPostFrameCallback((_) => notifier.value = value);
-      }
     }
   }
 
   void _updateIsEditing(){
     var value  = (_rusFocusNode.hasFocus || _tatarFocusNode.hasFocus)
                   && _textEditingController.text.isEmpty;
+    print("editing value: $value");                  
     _updateValueNotifier(_isEditing, value);
   }
 
@@ -116,6 +113,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
   
   void _unfocus(){
+    print("unfocus");
     _tatarFocusNode.unfocus();
     _rusFocusNode.unfocus();
     _updateIsEditing();
@@ -124,6 +122,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   void _nodeListener()async{
+    print("node listneer");
     _updateIsEditing();
     _updateIsHasFocus();
   }
@@ -136,6 +135,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   void _textListener(){
+    print("text listener");
     var text = _textEditingController.text.trim();
     var event = SearchTextEdited(
       text: text,
@@ -321,7 +321,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
               children: <Widget>[
                 _buildDefaultScreenList(state),
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 250),
+                  duration: Duration(milliseconds: 300),
                   color: widget.isEditing ? Colors.black45 : null,
                   child: widget.isEditing ? GestureDetector(
                     onTap: widget.onCoverTap,
@@ -398,7 +398,6 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
 
   @override
   Widget build(BuildContext context) {
-    
     return BlocBuilder<SearchBloc, SearchState>(
       bloc: widget.searchBloc,
       builder: (context, state){
