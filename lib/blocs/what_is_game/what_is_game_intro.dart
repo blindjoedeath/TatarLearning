@@ -37,11 +37,17 @@ class WhatIsGameIntro extends StatelessWidget {
       'Выберай вариант из предложенных, что изображено на картинке',
     ),
     title: Text('Что делать?'),
-    mainImage: Image.asset(
-      'images/quiz/2.png',
-      height: 220.0,
-      width: 220.0,
-      alignment: Alignment.center,
+    mainImage: OverflowBox(
+      maxWidth: 300,
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: Image.asset(
+            'images/quiz/2.png',
+          ),
+        )
+      )
     ),
     titleTextStyle: TextStyle(color: Colors.white),
     bodyTextStyle: TextStyle(color: Colors.white, 
@@ -55,11 +61,17 @@ class WhatIsGameIntro extends StatelessWidget {
       'В конце ты можешь сохранить слова, которые хочешь выучить!',
     ),
     title: Text('Результат'),
-    mainImage: Image.asset(
-      'images/quiz/3.png',
-      height: 220.0,
-      width: 220.0,
-      alignment: Alignment.center,
+    mainImage: OverflowBox(
+      maxWidth: 300,
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: Image.asset(
+            'images/quiz/3.png',
+          ),
+        )
+      )
     ),
     titleTextStyle: TextStyle(color: Colors.white),
     bodyTextStyle: TextStyle(color: Colors.white, 
