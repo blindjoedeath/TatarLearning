@@ -49,19 +49,24 @@ class WelcomeScreen extends StatelessWidget {
                   child: Text(
                     "Привет",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: Theme.of(context).textTheme.display1.fontSize,
-                        color: color),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 36,
+                      color: color
+                    ),
                   ),
                   delay: delayedAmount + 1000,
                 ),
                 DelayedAimation(
-                  child: Text(
-                    "Это Рәсемле Сүзлек",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 32.0,
-                        color: color),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Это Рәсемле Сүзлек",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30.0,
+                            color: color),
+                      ),
+                    ]
                   ),
                   delay: delayedAmount + 2000,
                 ),
