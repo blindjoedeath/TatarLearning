@@ -1,3 +1,4 @@
+import 'package:app/shared/entity/game_result.dart';
 import 'package:app/shared/repository/intro_showed_repository.dart';
 import 'package:app/shared/repository/quiz_cards_repository.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,12 @@ class WhatIsGameBloc extends Bloc<WhatIsGameEvent, WhatIsGameState>{
     var current = game.currentCard + 1;
 
     if (answers.length == game.cards.length){
-      yield GameOver();
+      yield GameOver(
+        gameResult: GameResult(
+          answers: answers,
+          quizCards: game.cards
+        )
+      );
     } else {
       yield game.copyWith(
         answers: answers,

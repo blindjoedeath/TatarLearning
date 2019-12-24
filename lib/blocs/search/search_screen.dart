@@ -4,8 +4,7 @@ import 'dart:async';
 import 'package:app/blocs/word_card_detail/word_card_detail_builder.dart';
 import 'package:app/shared/entity/language.dart';
 import 'package:app/shared/entity/word_card.dart';
-import 'package:app/tatar_keyboard/tatar_input.dart';
-import 'package:app/tatar_keyboard/tatar_keyboard_impl.dart';
+import 'package:app/shared/widget/tatar_keyboard.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 
@@ -387,7 +386,7 @@ class _SearchScreenBodySliver extends State<SearchScreenBodySliver>{
                     transitionDuration: Duration(milliseconds: 350),
                   )
                 );
-                widget.searchBloc.add(ReturnedFromDetailView());
+                widget.searchBloc.add(ReturnedToView());
               },
             );
           },

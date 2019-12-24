@@ -4,7 +4,7 @@ import 'package:app/shared/provider/mock_word_card_api_provider.dart';
 import 'package:app/shared/provider/word_card_db_provider.dart';
 import 'package:async/async.dart';
 
-class WordCardSearchRepository{
+class WordCardRepository{
   final _apiPovider = MockWordCardApiProvider();
   final _dbPovider = WordCardDbProvider();
 

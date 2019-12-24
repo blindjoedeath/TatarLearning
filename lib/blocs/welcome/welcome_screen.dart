@@ -57,10 +57,10 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 DelayedAimation(
                   child: Text(
-                    "Это Tatar Learning",
+                    "Это Рәсемле Сүзлек",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 35.0,
+                        fontSize: 32.0,
                         color: color),
                   ),
                   delay: delayedAmount + 2000,

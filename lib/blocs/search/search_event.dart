@@ -60,5 +60,5 @@ class UserExploredSearchResult extends SearchEvent{
   const UserExploredSearchResult({@required this.query});
 }
 
-class ReturnedFromDetailView extends SearchEvent{
+class ReturnedToView extends SearchEvent{
 }

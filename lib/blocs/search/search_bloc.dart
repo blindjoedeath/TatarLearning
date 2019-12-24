@@ -15,7 +15,7 @@ import 'package:rxdart/rxdart.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState>{
 
-  final WordCardSearchRepository wordCardSearchRepository;
+  final WordCardRepository wordCardRepository;
 
   final SearchHistoryRepository searchHistoryRepository;
 
@@ -26,7 +26,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   bool get isInited => searchHistoryRepository.isInited;
 
   Future init()async{
-    await wordCardSearchRepository.init();
+    await wordCardRepository.init();
     await searchHistoryRepository.init();
     add(SearchBlocInited());
   }
@@ -45,9 +45,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       }).share();
   }
 
-  SearchBloc({@required this.wordCardSearchRepository,
+  SearchBloc({@required this.wordCardRepository,
               @required this.searchHistoryRepository})
-    : assert(wordCardSearchRepository != null),
+    : assert(wordCardRepository != null),
       assert(searchHistoryRepository != null);
 
   @override
@@ -73,7 +73,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is SearchBlocInited){
       yield state.copyWith(searchHistory: searchHistoryRepository.get(),
-                           localCards: await wordCardSearchRepository.find("", SearchType.Local));
+                           localCards: await wordCardRepository.find("", SearchType.Local));
     } else if (event is SearchTextEdited){
       if (state.searchType == SearchType.Local || event.isLastCharacter){
         yield* _mapTextEdited(event.text);
@@ -94,7 +94,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
       yield* _mapSearchRequestDone(event);
     } else if (event is UserExploredSearchResult){
       yield* _mapUserExplored(event.query);
-    } else if (event is ReturnedFromDetailView){
+    } else if (event is ReturnedToView){
       yield* _mapReturnedFromView(event);
     }
   }
@@ -140,7 +140,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState>{
   void _createRequest(String text, SearchType searchType){
     _cancelRequestIfActive();
     _cardsLoadingSubscription = 
-      wordCardSearchRepository
+      wordCardRepository
       .find(text, searchType)
       .asStream().listen((cards){
         this.add(SearchRequestDone(

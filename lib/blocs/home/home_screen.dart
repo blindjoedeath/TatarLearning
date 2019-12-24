@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         PageRouteBuilder(
           pageBuilder: (c, a1, a2) => Hero(
             tag: _pressedItemTag,
-            child: WhatIsGameBuilder()
+            child: builder()
           ),
           transitionsBuilder: (c, anim, a2, child) => FadeTransition(
             opacity: CurvedAnimation(

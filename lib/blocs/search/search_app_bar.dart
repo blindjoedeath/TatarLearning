@@ -1,5 +1,5 @@
 import 'package:app/shared/entity/language.dart';
-import 'package:app/tatar_keyboard/tatar_key_row.dart';
+import 'package:app/shared/widget/tatar_keyboard/tatar_key_row.dart';
 import 'package:flutter/services.dart';
 
 import 'search_bloc.dart';

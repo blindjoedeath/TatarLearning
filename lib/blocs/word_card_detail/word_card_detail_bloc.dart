@@ -8,15 +8,15 @@ import 'package:bloc/bloc.dart';
 
 class WordCardDetailBloc extends Bloc<WordCardDetailEvent, WordCardDetailState>{
 
-  final WordCardSearchRepository wordCardSearchRepository;
+  final WordCardRepository wordCardRepository;
   final WordCard wordCard;
 
-  WordCardDetailBloc({@required this.wordCardSearchRepository, @required this.wordCard}) 
-    : assert(wordCardSearchRepository != null),
+  WordCardDetailBloc({@required this.wordCardRepository, @required this.wordCard}) 
+    : assert(wordCardRepository != null),
       assert(wordCard != null);
 
   WordCardDetailState get initialState => WordCardDetailState(
-    wordAdded: wordCardSearchRepository.containsLocal(wordCard)
+    wordAdded: wordCardRepository.containsLocal(wordCard)
   );
 
   @override
@@ -24,9 +24,9 @@ class WordCardDetailBloc extends Bloc<WordCardDetailEvent, WordCardDetailState>{
     if (event is WordAddedStateChanged){
       yield state.copyWith(wordAdded: !state.wordAdded);
       if (state.wordAdded){
-        await wordCardSearchRepository.addLocalIfNotContains(wordCard);
+        await wordCardRepository.addLocalIfNotContains(wordCard);
       } else {
-        await wordCardSearchRepository.deleteLocalIfContains(wordCard);
+        await wordCardRepository.deleteLocalIfContains(wordCard);
       }
     }
   }

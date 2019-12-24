@@ -1,4 +1,6 @@
+import 'package:app/blocs/game_overview/game_overview_builder.dart';
 import 'package:app/blocs/what_is_game/what_is_game_intro.dart';
+import 'package:app/shared/entity/game_result.dart';
 import 'package:app/shared/entity/quiz_card.dart';
 import 'package:app/shared/widget/bounce_button.dart';
 import 'package:app/shared/widget/fly_animation.dart';
@@ -77,7 +79,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20)
         ),
-        child: Text(card.variants[index], 
+        child: Text(card.variants[index].word, 
           style: Theme.of(context).textTheme.title.copyWith(
             color: Colors.white,
             fontSize: 26
@@ -290,8 +292,10 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
     );
   }
 
-  Widget _buildGameOver(){
-    return Container();
+  Widget _buildGameOver(GameOver state){
+    return GameOverviewBuilder(
+      gameResult: state.gameResult
+    );
   }
 
   @override
@@ -303,7 +307,6 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
           bloc: widget.whatIsGameBloc,
           builder: (context, state){
             if (state is GameActive){
-              print("forward");
               _progressController.forward();
             }
             return Stack(
@@ -311,7 +314,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
                 _buildTopRow(state),
                 (state is WaitForBegin) ? _buildAreYouReady() : 
                         (state is GameActive) ? _buildQuizScreen(state) :
-                        (state is GameOver) ? _buildGameOver() :
+                        (state is GameOver) ? _buildGameOver(state) :
                         _buildIndicator()
               ] ,
             );

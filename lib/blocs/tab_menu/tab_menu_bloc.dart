@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app/blocs/search/search_bloc.dart';
+import 'package:app/blocs/search/search_event.dart';
 import 'package:flutter/material.dart';
 
 import 'tab_menu_event.dart';
@@ -22,6 +23,7 @@ class TabMenuBloc extends Bloc<TabMenuEvent, TabMenuState>{
 
   TabMenuState get initialState => 
     heroTransition == null ? HomeTab() : WaitHeroTransition();
+
   @override
   Stream<TabMenuState> mapEventToState(TabMenuEvent event) async* {
     if(!searchBloc.isInited){
@@ -30,6 +32,7 @@ class TabMenuBloc extends Bloc<TabMenuEvent, TabMenuState>{
     if (event is HomeTabPressed){
       yield HomeTab();
     } else if (event is SearchTabPressed){
+      searchBloc.add(ReturnedToView());
       yield SearchTab();
     }
   }

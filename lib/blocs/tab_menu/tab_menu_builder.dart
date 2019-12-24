@@ -30,11 +30,11 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
     _searchHistoryRepository = SearchHistoryRepository();
     AppDependencyRepository
       .repositoriesContainer
-      .register<WordCardSearchRepository>((c) => WordCardSearchRepository(),
+      .register<WordCardRepository>((c) => WordCardRepository(),
                                           defaultMode: InjectMode.singleton);
     _searchBloc = SearchBloc(
-      wordCardSearchRepository: AppDependencyRepository
-        .repositoriesContainer.get<WordCardSearchRepository>(),
+      wordCardRepository: AppDependencyRepository
+        .repositoriesContainer.get<WordCardRepository>(),
       searchHistoryRepository: _searchHistoryRepository,
     );
 
@@ -53,8 +53,8 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
   @override
   void dispose() {
     super.dispose();
-    AppDependencyRepository.repositoriesContainer.get<WordCardSearchRepository>().dispose();
-    AppDependencyRepository.repositoriesContainer.unregister<WordCardSearchRepository>();
+    AppDependencyRepository.repositoriesContainer.get<WordCardRepository>().dispose();
+    AppDependencyRepository.repositoriesContainer.unregister<WordCardRepository>();
     AppDependencyRepository.blocsContainer.unregister<TabMenuBloc>();   
     _searchHistoryRepository.dispose();
     _bloc?.close();

@@ -16,11 +16,11 @@ class WhatIsGameIntro extends StatelessWidget {
     pageColor: Colors.green,
     bubbleBackgroundColor: Colors.white54,
     body: Text(
-      'Игра, где нужно отвечать на вопрос \"Что это?\"',
+      'Игра, где нужно отвечать на вопрос \"Что это?\" на время',
     ),
     title: Text('Что это?'),
     mainImage: Image.asset(
-      'images/quiz.png',
+      'images/quiz/1.png',
       height: 220.0,
       width: 220.0,
       alignment: Alignment.center,
@@ -34,11 +34,11 @@ class WhatIsGameIntro extends StatelessWidget {
     pageColor: Colors.blue,
     bubbleBackgroundColor: Colors.white54,
     body: Text(
-      'Выбери вариант из предложенных, что изображено на картинке',
+      'Выберай вариант из предложенных, что изображено на картинке',
     ),
     title: Text('Что делать?'),
     mainImage: Image.asset(
-      'images/quiz.png',
+      'images/quiz/2.png',
       height: 220.0,
       width: 220.0,
       alignment: Alignment.center,
@@ -56,7 +56,7 @@ class WhatIsGameIntro extends StatelessWidget {
     ),
     title: Text('Результат'),
     mainImage: Image.asset(
-      'images/quiz.png',
+      'images/quiz/3.png',
       height: 220.0,
       width: 220.0,
       alignment: Alignment.center,

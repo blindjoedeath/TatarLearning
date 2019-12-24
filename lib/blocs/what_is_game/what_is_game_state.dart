@@ -1,3 +1,4 @@
+import 'package:app/shared/entity/game_result.dart';
 import 'package:app/shared/entity/quiz_card.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -43,4 +44,8 @@ class GameActive extends WhatIsGameState{
 }
 
 
-class GameOver extends WhatIsGameState{}
+class GameOver extends WhatIsGameState{
+  final GameResult gameResult;
+
+  const GameOver({@required this.gameResult});
+}

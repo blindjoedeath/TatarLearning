@@ -25,9 +25,9 @@ class _WordCardDetailBuilderState extends State<WordCardDetailBuilder>{
 
   @override
   void initState() {
-    var repository = AppDependencyRepository.repositoriesContainer.get<WordCardSearchRepository>();
+    var repository = AppDependencyRepository.repositoriesContainer.get<WordCardRepository>();
     wordCardDetailBloc = WordCardDetailBloc(
-      wordCardSearchRepository: repository,
+      wordCardRepository: repository,
       wordCard: widget.wordCard
     );
     super.initState();
