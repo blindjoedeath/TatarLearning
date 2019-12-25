@@ -1,3 +1,4 @@
+import 'package:app/blocs/dictionary/dictionary_builder.dart';
 import 'package:app/shared/entity/user.dart';
 import 'package:app/shared/entity/word_card.dart';
 import 'package:app/shared/provider/mock_quiz_card_provider.dart';
@@ -69,29 +70,6 @@ class _UserScreenState extends State<UserScreen>{
     return cards;
   }
 
-  Widget _buildDictionary(User user){
-    return Material(
-      elevation: 4,
-      borderRadius: BorderRadius.circular(40),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: Text("Мой словарь",
-              style: Theme.of(context).textTheme.headline.copyWith(
-                color: Colors.black54
-              )
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: Wrap(children: _getCards(),)
-          )
-        ],
-      )
-    );
-  }
-
   Widget _buildAvatar(User user){
     return Material(
       elevation: 4,
@@ -124,13 +102,31 @@ class _UserScreenState extends State<UserScreen>{
                     color: Colors.black54
                   )
                 ),
-                SizedBox(width: 20,),
+                SizedBox(width: 10,),
                 Text(user.surname, 
                   style: Theme.of(context).textTheme.headline.copyWith(
                     color: Colors.black54
                   )
                 )
               ],
+            )
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 20, top: 20),
+            child: MaterialButton(
+              color: Colors.blue,
+              child: Text("Мой словарь", style: 
+                Theme.of(context).textTheme.title.copyWith(
+                  color: Colors.black54
+                ),
+              ),
+              onPressed: (){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => DictionaryBuilder()
+                  )
+                );
+              },
             )
           )
         ]
@@ -142,8 +138,6 @@ class _UserScreenState extends State<UserScreen>{
     return ListView(
       children: <Widget>[        
         _buildAvatar(state.user),
-        SizedBox(height: 24,),
-        _buildDictionary(state.user)
       ]
     );
   }
