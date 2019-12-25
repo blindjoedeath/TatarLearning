@@ -80,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             children: <Widget>[
               HomeGridItem(
+                icon: MdiIcons.crosshairsQuestion,
                 withHero: withHero,
                 itemIndex: 0,
                 color: Colors.green,
@@ -88,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: (tag) => _itemPressed(tag, () => WhatIsGamePressed()),
               ),
               HomeGridItem(
+                icon: Icons.image,
                 withHero: withHero,
                 itemIndex: 1,
                 color: Colors.purple,
@@ -112,10 +114,12 @@ class HomeGridItem extends StatelessWidget{
   final Color color;
   final bool withHero;
   final int itemIndex;
+  final IconData icon;
   final void Function(String) onTap;
 
   const HomeGridItem({@required this.title, @required this.color, @required this.itemIndex,
-                      @required this.subtitle, @required this.onTap, @required this.withHero});
+                      @required this.subtitle, @required this.onTap, @required this.withHero,
+                      @required this.icon});
 
   String get _heroTag => "whatIsGame $itemIndex";
 
@@ -140,7 +144,7 @@ class HomeGridItem extends StatelessWidget{
               child: Container(
                 padding: EdgeInsets.only(bottom: 20),
                 alignment: Alignment.center,
-                child: Icon(MdiIcons.crosshairsQuestion,
+                child: Icon(icon,
                   color: Colors.white70,
                   size: 80,
                 )

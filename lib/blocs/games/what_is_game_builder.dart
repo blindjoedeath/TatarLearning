@@ -120,7 +120,7 @@ class _WhatIsCardState extends State<WhatIsCard>{
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Colors.white.withAlpha(220), Colors.white],
-          stops: [0.0, 0.4],
+          stops: [0.0, 0.1],
         ),
       ),
       child: Column(
@@ -128,7 +128,7 @@ class _WhatIsCardState extends State<WhatIsCard>{
           Flexible(
             flex: 12,
             child: Container(
-              padding: EdgeInsets.only(right: 20, left: 20, top: 46),
+              padding: EdgeInsets.only(right: 30, left: 30, top: 60),
               alignment: Alignment.topCenter,
               child: Material(
                 color: Colors.transparent,

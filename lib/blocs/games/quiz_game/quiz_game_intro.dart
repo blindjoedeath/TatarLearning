@@ -28,6 +28,8 @@ class QuizGameIntro extends StatelessWidget {
             borderRadius: BorderRadius.circular(28),
             child: Image.asset(
               intro.imageUrl,
+              filterQuality: FilterQuality.high,
+              cacheHeight: 500,
             ),
           )
         )

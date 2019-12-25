@@ -209,26 +209,29 @@ class _QuizGameState extends State<QuizGame> with TickerProviderStateMixin{
   }
 
   Widget _buildTopRow(QuizGameState state){
-    return Stack(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [_buildCloseButton()]
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: state is GameActive ? [
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Text("${state.currentCard+1}/${state.cards.length}",
-                style: Theme.of(context).textTheme.display1.copyWith(
-                  color: Colors.white70
+    return SafeArea(
+      top: true,
+      child: Stack(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [_buildCloseButton()]
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: state is GameActive ? [
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("${state.currentCard+1}/${state.cards.length}",
+                  style: Theme.of(context).textTheme.display1.copyWith(
+                    color: Colors.white70
+                  )
                 )
               )
-            )
-          ] : [],
-        )
-      ]
+            ] : [],
+          )
+        ]
+      )
     );
   }
 
@@ -240,28 +243,24 @@ class _QuizGameState extends State<QuizGame> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    print(widget.mainColor);
-    print(Colors.green);
     return Scaffold(
-      backgroundColor: widget.mainColor,
-      body: SafeArea(
-        child: BlocBuilder<QuizGameBloc, QuizGameState>(
-          bloc: widget.quizGameBloc,
-          builder: (context, state){
-            if (state is GameActive){
-              _progressController.forward();
-            }
-            return Stack(
-              children: <Widget>[
-                _buildTopRow(state),
-                (state is WaitForBegin) ? _buildAreYouReady() : 
-                        (state is GameActive) ? _buildQuizScreen(state) :
-                        (state is GameOver) ? _buildGameOver(state) :
-                        _buildIndicator()
-              ] ,
-            );
-          },
-        )
+      body: BlocBuilder<QuizGameBloc, QuizGameState>(
+        bloc: widget.quizGameBloc,
+        builder: (context, state){
+          if (state is GameActive){
+            _progressController.forward();
+          }
+          return Stack(
+            children: <Widget>[
+              Container(color: widget.mainColor,),
+              _buildTopRow(state),
+              (state is WaitForBegin) ? _buildAreYouReady() : 
+                      (state is GameActive) ? _buildQuizScreen(state) :
+                      (state is GameOver) ? _buildGameOver(state) :
+                      _buildIndicator()
+            ] ,
+          );
+        },
       )
     );
   }
