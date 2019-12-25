@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app/blocs/home/home_builder.dart';
 import 'package:app/blocs/search/search_builder.dart';
+import 'package:app/blocs/user/user_builder.dart';
 
 import 'tab_menu_bloc.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,8 @@ class TabMenuScreen extends StatelessWidget {
   Widget _buildScaffold(BuildContext context, TabMenuState state){
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: state is SearchTab ? SearchBuilder() : HomeBuilder(),
+      body: state is SearchTab ? SearchBuilder() : 
+            state is UserTab ? UserBuilder() : HomeBuilder(),
       bottomNavigationBar: MenuNavigationBar(
         menuBloc: menuBloc,
       )
@@ -78,6 +80,14 @@ class _MenuNavigationBarState extends State<MenuNavigationBar>{
       ),
     );
 
+    var admin = MenuSection(
+      eventOnTap: UserTabPressed(),
+      navigationItem: BottomNavigationBarItem(
+        icon: Icon(Icons.account_circle),
+        title: Text('User'),
+      ),
+    );
+
     var search = MenuSection(
       eventOnTap: SearchTabPressed(),
       navigationItem: BottomNavigationBarItem(
@@ -86,6 +96,7 @@ class _MenuNavigationBarState extends State<MenuNavigationBar>{
       ),
     );
     _menuSections.add(home);
+    _menuSections.add(admin);
     _menuSections.add(search);
 
     super.initState();

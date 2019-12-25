@@ -8,4 +8,6 @@ abstract class TabMenuEvent extends Equatable {
 
 class HomeTabPressed extends TabMenuEvent{}
 
+class UserTabPressed extends TabMenuEvent{}
+
 class SearchTabPressed extends TabMenuEvent{}

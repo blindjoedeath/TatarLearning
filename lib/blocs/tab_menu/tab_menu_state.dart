@@ -10,4 +10,6 @@ class WaitHeroTransition extends TabMenuState{}
 
 class HomeTab extends TabMenuState{}
 
+class UserTab extends TabMenuState{}
+
 class SearchTab extends TabMenuState{}

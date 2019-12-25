@@ -2,7 +2,7 @@
 
 class WelcomedRepository{
   bool get isWelcomed{
-    return false;
+    return true;
   }
 
   set isWelcomed(bool value){

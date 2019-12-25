@@ -28,6 +28,12 @@ class _TabMenuBuilderState extends State<TabMenuBuilder>{
   @override
   void initState() {
     _searchHistoryRepository = SearchHistoryRepository();
+
+    AppDependencyRepository
+      .repositoriesContainer
+      .register<WordCardRepository>((c) => WordCardRepository(),
+                                          defaultMode: InjectMode.singleton);
+
     AppDependencyRepository
       .repositoriesContainer
       .register<WordCardRepository>((c) => WordCardRepository(),

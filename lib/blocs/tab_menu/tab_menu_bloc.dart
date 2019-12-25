@@ -31,7 +31,9 @@ class TabMenuBloc extends Bloc<TabMenuEvent, TabMenuState>{
     }
     if (event is HomeTabPressed){
       yield HomeTab();
-    } else if (event is SearchTabPressed){
+    } else if (event is UserTabPressed){
+      yield UserTab();
+    }else if (event is SearchTabPressed){
       searchBloc.add(ReturnedToView());
       yield SearchTab();
     }
