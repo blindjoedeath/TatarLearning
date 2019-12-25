@@ -30,6 +30,8 @@ class QuizGameScreen extends StatelessWidget {
           );
         } else {
           return QuizGame(
+            mainColor: configuration.mainColor,
+            secondColor: configuration.secondColor,
             cardBuilder: configuration.cardBuilder,
             quizGameBloc: quizGameBloc,
           );

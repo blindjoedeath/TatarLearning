@@ -1,7 +1,7 @@
 
 enum Screen{
   WhatIsGame,
-  WhichOfGame
+  ShowGame
 }
 
 class IntroShowedRepository{

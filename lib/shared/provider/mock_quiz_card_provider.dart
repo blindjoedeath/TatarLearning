@@ -16,7 +16,6 @@ class MockQuizCardProvider {
         _mockCard("Чәк чәк"),
         _mockCard("Чикләвек")
       ],
-      imageUrl: "http://sun9-14.userapi.com/c849424/v849424786/15eee3/Y4C7mfELwBA.jpg?ava=1"
     );
   });
 

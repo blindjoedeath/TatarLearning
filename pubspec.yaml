@@ -36,6 +36,7 @@ dependencies:
   intro_views_flutter: '^2.8.0'
   dioc: ^0.1.6
   liquid_progress_indicator: ^0.3.2
+  image_ink_well: ^0.1.0
 
 
 dev_dependencies:
@@ -57,7 +58,7 @@ flutter:
   assets:
     - images/
     - images/intro/what_is/
-    - images/intro/which_of/
+    - images/intro/show/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

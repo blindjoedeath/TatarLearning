@@ -19,5 +19,5 @@ class HomeDefaultState extends HomeState{
 
 class ShowWhatIsGame extends HomeState{}
 
-class ShowWhichOfGame extends HomeState{}
+class ShowShowGame extends HomeState{}
 			

@@ -20,11 +20,17 @@ class QuizGameIntro extends StatelessWidget {
       bubbleBackgroundColor: Colors.white54,
       body: Text(intro.body),
       title: Text(intro.title),
-      mainImage: intro.imageUrl != null ? Image.asset(
-        intro.imageUrl,
-        height: 220.0,
-        width: 220.0,
-        alignment: Alignment.center,
+      mainImage: intro.imageUrl != null ? OverflowBox(
+        maxWidth: 300,
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: Image.asset(
+              intro.imageUrl,
+            ),
+          )
+        )
       ) : Container(),
       titleTextStyle: TextStyle(color: Colors.white),
       bodyTextStyle: TextStyle(color: Colors.white, 

@@ -17,10 +17,13 @@ import 'quiz_game_event.dart';
 
 class QuizGame extends StatefulWidget{
   
+  final Color mainColor;
+  final Color secondColor;
   final QuizGameBloc quizGameBloc;
   final Widget Function(QuizCard, void Function(int)) cardBuilder;
 
-  const QuizGame({@required this.quizGameBloc, @required this.cardBuilder});
+  const QuizGame({@required this.quizGameBloc, @required this.cardBuilder,
+                  @required this.mainColor, @required this.secondColor});
   
   @override
   State<StatefulWidget> createState() => _QuizGameState();
@@ -133,6 +136,7 @@ class _QuizGameState extends State<QuizGame> with TickerProviderStateMixin{
           child: ValueListenableBuilder(
             valueListenable: _animationStatus,
             child: TimeLine(
+              color: widget.mainColor,
               animationController: _progressController,
               duration: Duration(seconds: 5),
               onTimeout: (){
@@ -185,7 +189,7 @@ class _QuizGameState extends State<QuizGame> with TickerProviderStateMixin{
                 "Готов", 
                 style: Theme.of(context).textTheme.headline.copyWith(
                   fontSize: 20,
-                  color: Colors.teal
+                  color: widget.secondColor
                 ),
               ),
             )
@@ -199,7 +203,7 @@ class _QuizGameState extends State<QuizGame> with TickerProviderStateMixin{
     return Center(
       child: CircularProgressIndicator(
         backgroundColor: Colors.white70,
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
+        valueColor: AlwaysStoppedAnimation<Color>(widget.secondColor),
       )
     );
   }
@@ -236,8 +240,10 @@ class _QuizGameState extends State<QuizGame> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    print(widget.mainColor);
+    print(Colors.green);
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: widget.mainColor,
       body: SafeArea(
         child: BlocBuilder<QuizGameBloc, QuizGameState>(
           bloc: widget.quizGameBloc,

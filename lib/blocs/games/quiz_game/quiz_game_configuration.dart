@@ -14,11 +14,15 @@ class IntroPage{
 }
 
 class QuizGameConfiguration{
+  final Color mainColor;
+  final Color secondColor;
   final List<IntroPage> intros;
   final Screen screenType;
   final Widget Function(QuizCard, void Function(int)) cardBuilder;
 
   const QuizGameConfiguration({@required this.intros,
                                @required this.screenType,
-                              @required this.cardBuilder});
+                              @required this.cardBuilder,
+                              this.mainColor = Colors.green,
+                              this.secondColor = Colors.teal});
 }

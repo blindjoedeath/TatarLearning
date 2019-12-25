@@ -40,8 +40,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
       );
     } else if (event is WhatIsGamePressed){
       yield ShowWhatIsGame();
-    } else if (event is WhichOfGamePressed){
-      yield ShowWhichOfGame();
+    } else if (event is ShowGamePressed){
+      yield ShowShowGame();
     } else if (event is Showed){
       yield HomeDefaultState();
     }

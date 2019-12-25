@@ -1,5 +1,5 @@
+import 'package:app/blocs/games/show_game_builder.dart';
 import 'package:app/blocs/games/what_is_game_builder.dart';
-import 'package:app/blocs/which_of_game/which_of_game_builder.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'home_builder.dart';
@@ -61,9 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is ShowWhatIsGame){
           widget.homeBloc.add(Showed());
           _show(() => WhatIsGameBuilder());
-        } else if(state is ShowWhichOfGame){
+        } else if(state is ShowShowGame){
           widget.homeBloc.add(Showed());
-          _show(() => WhichOfGameBuilder());
+          _show(() => ShowGameBuilder());
         }
         if (state is HomeDefaultState){
           withHero = state.withHeros;
@@ -91,9 +91,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 withHero: withHero,
                 itemIndex: 1,
                 color: Colors.purple,
-                title: "Что это?",
-                subtitle: "Нәрсә бу?",
-                onTap: (tag) => _itemPressed(tag, () => WhichOfGamePressed()),
+                title: "Покажи",
+                subtitle: "Күрсәтү",
+                onTap: (tag) => _itemPressed(tag, () => ShowGamePressed()),
               ),
             ],
           )

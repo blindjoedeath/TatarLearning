@@ -3,12 +3,13 @@ import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class TimeLine extends StatefulWidget{
 
+  final Color color;
   final AnimationController animationController;
   final Duration duration;
   final void Function() onTimeout;
   
   const TimeLine({@required this.duration, @required this.animationController,
-                   this.onTimeout});
+                   this.onTimeout, this.color = Colors.green});
 
   @override
   State<StatefulWidget> createState() => _TimeLineState();
@@ -46,7 +47,7 @@ class _TimeLineState extends State<TimeLine> with SingleTickerProviderStateMixin
         LiquidLinearProgressIndicator(
           value: 1 - widget.animationController.value,
           backgroundColor: Colors.transparent,
-          valueColor: AlwaysStoppedAnimation(Colors.green),
+          valueColor: AlwaysStoppedAnimation(widget.color),
         ) : Container()
     );
   }
