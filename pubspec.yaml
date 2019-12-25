@@ -56,7 +56,8 @@ flutter:
 
   assets:
     - images/
-    - images/quiz/
+    - images/intro/what_is/
+    - images/intro/which_of/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

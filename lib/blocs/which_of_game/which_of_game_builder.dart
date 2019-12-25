@@ -3,27 +3,27 @@ import 'package:app/shared/repository/app_dependency_repository.dart';
 import 'package:app/shared/repository/intro_showed_repository.dart';
 import 'package:app/shared/repository/quiz_cards_repository.dart';
 
-import 'what_is_game_screen.dart';
-import 'what_is_game_bloc.dart';
+import 'which_of_game_screen.dart';
+import 'which_of_game_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class WhatIsGameBuilder extends StatefulWidget {
+class WhichOfGameBuilder extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => _WhatIsGameBuilderState();
+  State<StatefulWidget> createState() => _WhichOfGameBuilderState();
 
 }
 
-class _WhatIsGameBuilderState extends State<WhatIsGameBuilder>{
+class _WhichOfGameBuilderState extends State<WhichOfGameBuilder>{
 
-  WhatIsGameBloc whatIsGameBloc;
+  WhichOfGameBloc whichOfGameBloc;
 
   @override
   void initState() {
     AppDependencyRepository.
         repositoriesContainer.register<QuizCardsRepository>((c) => QuizCardsRepository());
-    whatIsGameBloc = WhatIsGameBloc(
+    whichOfGameBloc = WhichOfGameBloc(
       introShowedRepository: AppDependencyRepository.repositoriesContainer.get<IntroShowedRepository>(),
       quizCardsRepository: AppDependencyRepository.repositoriesContainer.get<QuizCardsRepository>()
     );
@@ -33,15 +33,15 @@ class _WhatIsGameBuilderState extends State<WhatIsGameBuilder>{
   @override
   void dispose() {
     super.dispose();
-    whatIsGameBloc?.close();
+    whichOfGameBloc?.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<WhatIsGameBloc>.value(
-      value: whatIsGameBloc,
-      child: WhatIsGameScreen(
-        whatIsGameBloc: whatIsGameBloc,
+    return BlocProvider<WhichOfGameBloc>.value(
+      value: whichOfGameBloc,
+      child: WhichOfGameScreen(
+        whichOfGameBloc: whichOfGameBloc,
       ),
     );
   }

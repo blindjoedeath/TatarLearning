@@ -1,24 +1,24 @@
-import 'package:app/blocs/what_is_game/what_is_game_event.dart';
+import 'package:app/blocs/which_of_game/which_of_game_event.dart';
 import 'package:intro_views_flutter/Constants/constants.dart';
 import 'package:intro_views_flutter/Models/page_view_model.dart';
 import 'package:intro_views_flutter/intro_views_flutter.dart';
 
-import 'what_is_game_bloc.dart';
+import 'which_of_game_bloc.dart';
 import 'package:flutter/material.dart';
 
-class WhatIsGameIntro extends StatelessWidget {
+class WhichOfGameIntro extends StatelessWidget {
 
-  final WhatIsGameBloc whatIsGameBloc;
+  final WhichOfGameBloc whichOfGameBloc;
 
-  WhatIsGameIntro({@required this.whatIsGameBloc});
+  WhichOfGameIntro({@required this.whichOfGameBloc});
 
   var first = PageViewModel(
-    pageColor: Colors.green,
+    pageColor: Colors.purple,
     bubbleBackgroundColor: Colors.white54,
     body: Text(
-      'Игра, где нужно отвечать на вопрос \"Что это?\" на время',
+      'Игра, где нужно отвечать на вопрос \"Какая из?\" на время',
     ),
-    title: Text('Что это?'),
+    title: Text('Какая из?'),
     mainImage: Image.asset(
       'images/quiz/1.png',
       height: 220.0,
@@ -34,7 +34,7 @@ class WhatIsGameIntro extends StatelessWidget {
     pageColor: Colors.blue,
     bubbleBackgroundColor: Colors.white54,
     body: Text(
-      'Выберай вариант из предложенных, что изображено на картинке',
+      'Выберай картинку из предложенных, которая изображает слово',
     ),
     title: Text('Что делать?'),
     mainImage: OverflowBox(
@@ -90,7 +90,7 @@ class WhatIsGameIntro extends StatelessWidget {
             [first, second, third],
             onTapNextButton: (){print("next");},
             onTapDoneButton: (){
-              whatIsGameBloc.add(IntroIsOver());
+              whichOfGameBloc.add(IntroIsOver());
             },
             showSkipButton: false,
             doneText: const Text("ОК!"),

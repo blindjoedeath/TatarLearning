@@ -1,31 +1,31 @@
 import 'package:app/blocs/game_overview/game_overview_builder.dart';
-import 'package:app/blocs/what_is_game/what_is_game_intro.dart';
+import 'package:app/blocs/which_of_game/which_of_game_intro.dart';
 import 'package:app/shared/entity/game_result.dart';
 import 'package:app/shared/entity/quiz_card.dart';
 import 'package:app/shared/widget/bounce_button.dart';
 import 'package:app/shared/widget/fly_animation.dart';
 import 'package:app/shared/widget/time_line.dart';
 
-import 'what_is_game_builder.dart';
-import 'what_is_game_bloc.dart';
+import 'which_of_game_builder.dart';
+import 'which_of_game_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'what_is_game_state.dart';
-import 'what_is_game_event.dart';
+import 'which_of_game_state.dart';
+import 'which_of_game_event.dart';
 
 
-class WhatIsGame extends StatefulWidget{
+class WhichOfGame extends StatefulWidget{
   
-  final WhatIsGameBloc whatIsGameBloc;
+  final WhichOfGameBloc whichOfGameBloc;
 
-  const WhatIsGame({@required this.whatIsGameBloc});
+  const WhichOfGame({@required this.whichOfGameBloc});
   
   @override
-  State<StatefulWidget> createState() => _WhatIsGameState();
+  State<StatefulWidget> createState() => _WhichOfGameState();
 
 }
 
-class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
+class _WhichOfGameState extends State<WhichOfGame> with TickerProviderStateMixin{
 
   AnimationController _cardController;
   AnimationController _progressController;
@@ -72,7 +72,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
 
   Widget _buildChip(QuizCard card, int index){
     return Container(
-      width: 150,
+      width: 130,
       height: 40,
       margin: EdgeInsets.all(6),
       child: RaisedButton(
@@ -88,7 +88,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
         elevation: 4,   
         onPressed: (){
           _animateAnswer().whenComplete((){
-            widget.whatIsGameBloc.add(UserAnswered(
+            widget.whichOfGameBloc.add(UserAnswered(
               answerIndex: index
             ));
           });
@@ -214,7 +214,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
               duration: Duration(seconds: 5),
               onTimeout: (){
                 _animateAnswer().whenComplete((){
-                  widget.whatIsGameBloc.add(QuestionTimeout());
+                  widget.whichOfGameBloc.add(QuestionTimeout());
                 });
               },
             )
@@ -241,7 +241,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
             padding: EdgeInsets.only(bottom: 46),
             child: BounceButton(
               onTap: (){       
-                widget.whatIsGameBloc.add(UserIsReady());
+                widget.whichOfGameBloc.add(UserIsReady());
               },
               width: 240,
               color: Colors.white70,
@@ -268,7 +268,7 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
     );
   }
 
-  Widget _buildTopRow(WhatIsGameState state){
+  Widget _buildTopRow(WhichOfGameState state){
     return Stack(
       children: [
         Row(
@@ -303,10 +303,11 @@ class _WhatIsGameState extends State<WhatIsGame> with TickerProviderStateMixin{
     return Scaffold(
       backgroundColor: Colors.green,
       body: SafeArea(
-        child: BlocBuilder<WhatIsGameBloc, WhatIsGameState>(
-          bloc: widget.whatIsGameBloc,
+        child: BlocBuilder<WhichOfGameBloc, WhichOfGameState>(
+          bloc: widget.whichOfGameBloc,
           builder: (context, state){
             if (state is GameActive){
+              print("forward");
               _progressController.forward();
             }
             return Stack(

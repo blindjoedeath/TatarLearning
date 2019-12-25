@@ -3,25 +3,25 @@ import 'package:app/shared/entity/quiz_card.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-abstract class WhatIsGameState extends Equatable {
-  const WhatIsGameState();
+abstract class WhichOfGameState extends Equatable {
+  const WhichOfGameState();
 
   @override
   List<Object> get props => [];
 
 }
 
-class ShowIntro extends WhatIsGameState{}
+class ShowIntro extends WhichOfGameState{}
 
-class GameLoading extends WhatIsGameState{}
+class GameLoading extends WhichOfGameState{}
 
-class WaitForBegin extends WhatIsGameState{
+class WaitForBegin extends WhichOfGameState{
   final List<QuizCard> cards;
 
   const WaitForBegin({@required this.cards});
 }
 
-class GameActive extends WhatIsGameState{
+class GameActive extends WhichOfGameState{
   final List<QuizCard> cards;
   List<bool> answers;
   final int currentCard;
@@ -44,7 +44,7 @@ class GameActive extends WhatIsGameState{
 }
 
 
-class GameOver extends WhatIsGameState{
+class GameOver extends WhichOfGameState{
   final GameResult gameResult;
 
   const GameOver({@required this.gameResult});
