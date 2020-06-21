@@ -15,11 +15,11 @@ void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
-  Hive.registerAdapter(SearchQueriesAdapter(), 0);
-  Hive.registerAdapter(WordCardAdapter(), 1);
-  Hive.registerAdapter(WordCardContainerAdapter(), 2);
+  Hive.registerAdapter(SearchQueriesAdapter());
+  Hive.registerAdapter(WordCardAdapter());
+  Hive.registerAdapter(WordCardContainerAdapter());
 
-
+ 
   runApp(AppBuilder(
   ));
 }

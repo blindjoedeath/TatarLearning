@@ -24,4 +24,7 @@ class SearchQueriesAdapter extends TypeAdapter<SearchQueries> {
       ..writeByte(0)
       ..write(obj.value);
   }
+
+  @override
+  int get typeId => 0;
 }

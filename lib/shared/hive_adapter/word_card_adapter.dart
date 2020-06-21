@@ -38,4 +38,7 @@ class WordCardAdapter extends TypeAdapter<WordCard> {
       ..writeByte(4)
       ..write(obj.description);
   }
+
+  @override
+  int get typeId => 1;
 }

@@ -27,4 +27,7 @@ class WordCardContainerAdapter extends TypeAdapter<WordCardContainer> {
       ..writeByte(0)
       ..write(obj.cards);
   }
+
+  @override
+  int get typeId => 2;
 }
